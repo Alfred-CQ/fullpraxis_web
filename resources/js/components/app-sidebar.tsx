@@ -23,6 +23,11 @@ const mainNavItems: NavItem[] = [
         href: '/seasons',
         icon: LayoutGrid,
     },
+    {
+        title: 'Discounts',
+        href: '/discounts',
+        icon: LayoutGrid,
+    },
 ];
 
 const footerNavItems: NavItem[] = [
