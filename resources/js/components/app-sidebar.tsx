@@ -18,6 +18,11 @@ const mainNavItems: NavItem[] = [
         href: '/students',
         icon: LayoutGrid,
     },
+    {
+        title: 'Seasons',
+        href: '/seasons',
+        icon: LayoutGrid,
+    },
 ];
 
 const footerNavItems: NavItem[] = [
