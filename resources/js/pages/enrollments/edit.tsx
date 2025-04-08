@@ -16,42 +16,42 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 const studyAreas = ['Ingenierias', 'Biomedicas', 'Sociales']; // Predefined study areas
 
 const FormSchema = z.object({
-    enrolment_code: z.string().min(1, { message: 'El código de matrícula es obligatorio.' }),
+    Enrollment_code: z.string().min(1, { message: 'El código de matrícula es obligatorio.' }),
     study_area: z.enum(['Ingenierias', 'Biomedicas', 'Sociales'], {
         errorMap: () => ({ message: 'Seleccione un área de estudio válida.' }),
     }),
-    enrolment_date: z.string().nonempty({ message: 'La fecha de matrícula es obligatoria.' }),
+    Enrollment_date: z.string().nonempty({ message: 'La fecha de matrícula es obligatoria.' }),
     start_date: z.string().nonempty({ message: 'La fecha de inicio es obligatoria.' }),
     end_date: z.string().nonempty({ message: 'La fecha de fin es obligatoria.' }),
     due_date: z.string().nonempty({ message: 'La fecha de vencimiento es obligatoria.' }),
 });
 
-interface Enrolment {
-    enrolment_id: string;
-    enrolment_code: string;
+interface Enrollment {
+    Enrollment_id: string;
+    Enrollment_code: string;
     study_area: 'Ingenierias' | 'Biomedicas' | 'Sociales';
-    enrolment_date: string;
+    Enrollment_date: string;
     start_date: string;
     end_date: string;
     due_date: string;
 }
 
-export default function EditEnrolment({ enrolment }: { enrolment: Enrolment }) {
+export default function EditEnrollment({ Enrollment }: { Enrollment: Enrollment }) {
     const form = useForm<z.infer<typeof FormSchema>>({
         resolver: zodResolver(FormSchema),
         defaultValues: {
-            enrolment_code: enrolment.enrolment_code,
-            study_area: enrolment.study_area,
-            enrolment_date: enrolment.enrolment_date,
-            start_date: enrolment.start_date,
-            end_date: enrolment.end_date,
-            due_date: enrolment.due_date,
+            Enrollment_code: Enrollment.Enrollment_code,
+            study_area: Enrollment.study_area,
+            Enrollment_date: Enrollment.Enrollment_date,
+            start_date: Enrollment.start_date,
+            end_date: Enrollment.end_date,
+            due_date: Enrollment.due_date,
         },
     });
 
     function onSubmit(data: z.infer<typeof FormSchema>) {
 
-        router.put(`/enrolments/${enrolment.enrolment_id}`, data);}
+        router.put(`/Enrollments/${Enrollment.Enrollment_id}`, data);}
 
     return (
         <AppLayout>
@@ -61,7 +61,7 @@ export default function EditEnrolment({ enrolment }: { enrolment: Enrolment }) {
                     {/* Código de Matrícula */}
                     <FormField
                         control={form.control}
-                        name="enrolment_code"
+                        name="Enrollment_code"
                         render={({ field }) => (
                             <FormItem>
                                 <FormLabel>Código de Matrícula</FormLabel>
@@ -102,7 +102,7 @@ export default function EditEnrolment({ enrolment }: { enrolment: Enrolment }) {
                     {/* Fecha de Matrícula */}
                     <FormField
                         control={form.control}
-                        name="enrolment_date"
+                        name="Enrollment_date"
                         render={({ field }) => (
                             <FormItem>
                                 <FormLabel>Fecha de Matrícula</FormLabel>

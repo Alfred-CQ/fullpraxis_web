@@ -12,19 +12,14 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('students', function (Blueprint $table) {
-            $table->id('student_id');
-            $table->unsignedBigInteger('person_id');
+            $table->id();
+            $table->foreignId('person_id')->constrained('people')->onDelete('cascade');
             $table->date('birth_date');
-            $table->string('guardian_mobile_number', 9);
-            $table->string('graduated_high_school', 100);
+            $table->string('guardian_phone', 9)->nullable();
+            $table->string('high_school_name', 100)->nullable();
             $table->string('photo_path')->nullable();
+            // $table->softDeletes();
             $table->timestamps();
-
-            // Foreign key constraints
-            $table->foreign('person_id')
-                  ->references('person_id')
-                  ->on('persons')
-                  ->onDelete('cascade');
         });
     }
 

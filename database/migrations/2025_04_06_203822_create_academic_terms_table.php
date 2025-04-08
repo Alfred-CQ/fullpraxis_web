@@ -11,14 +11,16 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('seasons', function (Blueprint $table) {
-            $table->id('season_id');
+        Schema::create('academic_terms', function (Blueprint $table) {
+            $table->id();
             $table->string('name', 100);
             $table->date('start_date');
             $table->date('end_date');
-            $table->double('monthly_cost');
-            $table->double('enrollment_cost');
+            $table->decimal('enrollment_cost', 10, 2);
+            $table->decimal('monthly_cost', 10, 2);
             $table->boolean('status')->default(true);
+
+            // $table->softDeletes();
             $table->timestamps();
         });
     }
@@ -28,6 +30,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('seasons');
+        Schema::dropIfExists('academic_terms');
     }
 };

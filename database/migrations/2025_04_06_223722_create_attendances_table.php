@@ -11,12 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('persons', function (Blueprint $table) {
-            $table->id('person_id');
-            $table->string('doi', 8)->unique();
-            $table->string('first_names', 100);
-            $table->string('last_names', 100);
-            $table->string('mobile_number', 9);
+        Schema::create('attendances', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('person_id')->constrained('people')->restrictOnDelete();
+            $table->timestamp('recorded_at')->useCurrent();
+            $table->enum('attendance_type', ['Entry', 'Exit']);
+
+            // $table->softDeletes();
             $table->timestamps();
         });
     }
@@ -26,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('persons');
+        Schema::dropIfExists('attendances');
     }
 };

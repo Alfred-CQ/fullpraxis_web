@@ -1,29 +1,29 @@
 <?php
 
-namespace App\Http\Controllers\Season;
+namespace App\Http\Controllers\Academic;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
-use App\Models\Season;
+use App\Models\AcademicTerm;
 
 use Inertia\Inertia;
 use Inertia\Response;
 
-class SeasonController extends Controller
+class AcademicTermController extends Controller
 {
     public function index(): Response
     {
-        $seasons = Season::all(['season_id', 'name', 'start_date', 'end_date', 'monthly_cost', 'enrollment_cost']);
+        $academicTerms = AcademicTerm::all(['id', 'name', 'start_date', 'end_date', 'monthly_cost', 'enrollment_cost']);
 
-        return Inertia::render('seasons/index', [
-            'seasons' => $seasons,
+        return Inertia::render('AcademicTerms/Index', [
+            'academicTerms' => $academicTerms,
         ]);
     }
 
     public function create(): Response
     {
-        return Inertia::render('seasons/create');
+        return Inertia::render('AcademicTerms/create');
     }
 
     public function store(Request $request)
@@ -36,10 +36,8 @@ class SeasonController extends Controller
             'enrollment_cost' => 'required|numeric|min:0',
         ]);
 
+        AcademicTerm::create($validated);
 
-
-        Season::create($validated);
-
-        return redirect()->route('seasons.index')->with('success', 'Season created successfully!');
+        return redirect()->route('academic-terms.index')->with('success', 'Academic term created successfully!');
     }
 }

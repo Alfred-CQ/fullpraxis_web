@@ -14,16 +14,17 @@ class DiscountController extends Controller
 {
     public function index(): Response
     {
-        $discounts = Discount::all(['name', 'monthly_discount', 'enrollment_discount']);
+        $discounts = Discount::all(['id', 'name', 'monthly_discount', 'enrollment_discount', 'description']);
 
-        return Inertia::render('discounts/index', [
+        return Inertia::render('Discounts/Index', [
             'discounts' => $discounts,
         ]);
     }
 
+
     public function create(): Response
     {
-        return Inertia::render('discounts/create');
+        return Inertia::render('Discounts/create');
     }
 
     public function store(Request $request)
@@ -32,6 +33,7 @@ class DiscountController extends Controller
             'name' => 'required|string|max:100',
             'monthly_discount' => 'nullable|numeric|min:0',
             'enrollment_discount' => 'nullable|numeric|min:0',
+            'description' => 'nullable|string|max:255',
         ]);
 
         Discount::create($validated);

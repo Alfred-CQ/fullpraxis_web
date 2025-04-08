@@ -5,11 +5,11 @@ import { Button } from '@/components/ui/button';
 import { router } from '@inertiajs/react';
 import { ColumnDef } from '@tanstack/react-table';
 
-export type Enrolment = {
-    enrolment_id: number;
-    enrolment_code: string;
+export type Enrollment = {
+    Enrollment_id: number;
+    Enrollment_code: string;
     study_area: string;
-    enrolment_date: string;
+    Enrollment_date: string;
     start_date: string;
     end_date: string;
     due_date: string;
@@ -19,7 +19,7 @@ export type Enrolment = {
     season_name: string;
 };
 
-export const columns: ColumnDef<Enrolment>[] = [
+export const columns: ColumnDef<Enrollment>[] = [
     {
         accessorKey: '_number',
         header: '#',
@@ -30,7 +30,7 @@ export const columns: ColumnDef<Enrolment>[] = [
         header: 'DNI del Estudiante',
     },
     {
-        accessorKey: 'enrolment_code',
+        accessorKey: 'Enrollment_code',
         header: 'Código de Matrícula',
     },
     {
@@ -38,7 +38,7 @@ export const columns: ColumnDef<Enrolment>[] = [
         header: 'Área de Estudio',
     },
     // {
-    //     accessorKey: 'enrolment_date',
+    //     accessorKey: 'Enrollment_date',
     //     header: 'Fecha de Matrícula',
     //     cell: ({ getValue }) => new Date(getValue() as string).toLocaleDateString(),
     // },
@@ -97,15 +97,15 @@ export const columns: ColumnDef<Enrolment>[] = [
         id: 'actions',
         header: 'Acciones',
         cell: ({ row }) => {
-            const enrolment = row.original;
-           // console.log(route('enrolments.edit', enrolment.enrolment_id));
-           //console.log("enrolment_id:", enrolment.enrolment_id);
+            const Enrollment = row.original;
+           // console.log(route('Enrollments.edit', Enrollment.Enrollment_id));
+           //console.log("Enrollment_id:", Enrollment.Enrollment_id);
             return (
                 <div className="flex space-x-2">
                     <Button
     variant="outline"
     size="sm"
-    onClick={() => router.get(route('enrolments.edit', { enrolment: enrolment.enrolment_id }))}>
+    onClick={() => router.get(route('Enrollments.edit', { Enrollment: Enrollment.Enrollment_id }))}>
     Editar
 </Button>
                 </div>

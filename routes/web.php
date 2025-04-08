@@ -17,6 +17,6 @@ require __DIR__.'/settings.php';
 require __DIR__.'/auth.php';
 
 require __DIR__ . '/custom/StudentsRoutes.php';
-require __DIR__ . '/custom/SeasonsRoutes.php';
+require __DIR__ . '/custom/AcademicTermRoutes.php';
 require __DIR__ . '/custom/DiscountsRoutes.php';
-require __DIR__ . '/custom/EnrolmentRoutes.php';
+require __DIR__ . '/custom/EnrollmentRoutes.php';

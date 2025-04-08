@@ -12,10 +12,13 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('discounts', function (Blueprint $table) {
-            $table->id('discount_id');
-            $table->string('name', 100);
-            $table->double('monthly_discount')->nullable();
-            $table->double('enrollment_discount')->nullable();
+            $table->id();
+            $table->string('name', 50);
+            $table->decimal('monthly_discount', 10, 2);
+            $table->decimal('enrollment_discount', 10, 2);
+            $table->string('description')->nullable();
+
+            // $table->softDeletes();
             $table->timestamps();
         });
     }

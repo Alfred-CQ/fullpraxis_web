@@ -17,10 +17,10 @@ const EstadoDeuda = ['Pagado', 'Adelanto', 'Pendiente', 'Vencido'] as const;
 // Validation schema with Zod
 const FormSchema = z.object({
     doi: z.string().min(8, { message: 'El DNI debe tener 8 caracteres.' }).max(8, { message: 'El DNI debe tener 8 caracteres.' }),
-    enrolment_code: z.string().nonempty({ message: 'El código de matrícula es obligatorio.' }),
+    Enrollment_code: z.string().nonempty({ message: 'El código de matrícula es obligatorio.' }),
     season_id: z.string().nonempty({ message: 'Debe seleccionar un ciclo.' }),
     study_area: z.enum(AreaDeEstudios, { errorMap: () => ({ message: 'Debe seleccionar un área de estudios válida.' }) }),
-    enrolment_date: z.string().nonempty({ message: 'La fecha de matrícula es obligatoria.' }),
+    Enrollment_date: z.string().nonempty({ message: 'La fecha de matrícula es obligatoria.' }),
     start_date: z.string().nonempty({ message: 'La fecha de inicio es obligatoria.' }),
     end_date: z.string().nonempty({ message: 'La fecha de fin es obligatoria.' }),
     due_date: z.string().nonempty({ message: 'La fecha de vencimiento es obligatoria.' }),
@@ -28,15 +28,15 @@ const FormSchema = z.object({
     debt_status: z.enum(EstadoDeuda, { errorMap: () => ({ message: 'Debe seleccionar un estado de deuda válido.' }) }),
 });
 
-export function EnrolmentForm({ seasons }: { seasons: { season_id: number; name: string }[] }) {
+export function EnrollmentForm({ seasons }: { seasons: { season_id: number; name: string }[] }) {
     const form = useForm<z.infer<typeof FormSchema>>({
         resolver: zodResolver(FormSchema),
         defaultValues: {
             doi: '',
             season_id: '',
-            enrolment_code: '',
+            Enrollment_code: '',
             study_area: undefined,
-            enrolment_date: '',
+            Enrollment_date: '',
             start_date: '',
             end_date: '',
             due_date: '',
@@ -47,7 +47,7 @@ export function EnrolmentForm({ seasons }: { seasons: { season_id: number; name:
 
     // Handle form submission
     function onSubmit(data: z.infer<typeof FormSchema>) {
-        router.post(route('enrolments.store'), data);
+        router.post(route('Enrollments.store'), data);
     }
     return (
         <Form {...form}>
@@ -95,7 +95,7 @@ export function EnrolmentForm({ seasons }: { seasons: { season_id: number; name:
 
                 <FormField
                     control={form.control}
-                    name="enrolment_code"
+                    name="Enrollment_code"
                     render={({ field }) => (
                         <FormItem>
                             <FormLabel>Código de Matrícula</FormLabel>
@@ -133,10 +133,10 @@ export function EnrolmentForm({ seasons }: { seasons: { season_id: number; name:
                     )}
                 />
 
-                {/* Enrolment Date */}
+                {/* Enrollment Date */}
                 <FormField
                     control={form.control}
-                    name="enrolment_date"
+                    name="Enrollment_date"
                     render={({ field }) => (
                         <FormItem>
                             <FormLabel>Fecha de Matrícula</FormLabel>

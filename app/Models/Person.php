@@ -2,25 +2,49 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Person extends Model
 {
     use HasFactory;
 
-    protected $table = 'persons';
-    protected $primaryKey = 'person_id';
-
+    protected $table = 'people';
     protected $fillable = [
         'doi',
         'first_names',
         'last_names',
-        'mobile_number',
+        'phone_number',
+        'person_type',
     ];
 
-    public function student()
+    public function student() 
     {
-        return $this->hasOne(Student::class, 'person_id', 'person_id');
+        return $this->hasOne(Student::class, 'person_id');
     }
+    public function teacher() 
+    {
+        return $this->hasOne(Teacher::class, 'person_id');
+    }
+    public function attendance() 
+    {
+        return $this->hasMany(Attendance::class, 'person_id');
+    }
+    public function enrolment() 
+    {
+        return $this->hasMany(Enrolment::class, 'person_id');
+    }
+    /*
+    public function scopeFilter($query, array $filters)
+    {
+        $query->when($filters['search'] ?? false, fn($query, $search) =>
+            $query->where(fn($query) =>
+                $query->where('doi', 'like', '%' . $search . '%')
+                    ->orWhere('first_names', 'like', '%' . $search . '%')
+                    ->orWhere('last_names', 'like', '%' . $search . '%')
+            )
+        );
+    }
+
+    */
 }
