@@ -14,8 +14,8 @@ return new class extends Migration
         Schema::create('discounts', function (Blueprint $table) {
             $table->id();
             $table->string('name', 50);
-            $table->decimal('monthly_discount', 10, 2);
-            $table->decimal('enrollment_discount', 10, 2);
+            $table->decimal('monthly_discount', 10, 2)->default(0.00);
+            $table->decimal('enrollment_discount', 10, 2)->default(0.00);
             $table->string('description')->nullable();
 
             // $table->softDeletes();
