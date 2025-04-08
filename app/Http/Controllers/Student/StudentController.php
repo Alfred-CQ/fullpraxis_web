@@ -13,10 +13,12 @@ use App\Models\Student;
 use Inertia\Inertia;
 use Inertia\Response;
 
+use Barryvdh\DomPDF\Facade\Pdf;
+
 class StudentController extends Controller
 {
     //
-    public function index() : Response
+    public function index(): Response
     {
         $students = Student::with('person')->get()->map(function ($student) {
             return [
@@ -53,6 +55,7 @@ class StudentController extends Controller
             'birth_date' => 'required|date',
             'guardian_mobile_number' => 'required|string|size:9',
             'graduated_high_school' => 'required|string|max:100',
+            'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048'
         ]);
 
         $person = Person::firstOrCreate(
@@ -64,11 +67,17 @@ class StudentController extends Controller
             ]
         );
 
+        $photoPath = null;
+        if ($request->hasFile('photo')) {
+            $photoPath = $request->file('photo')->store('students/photos', 'public');
+        }
+
         Student::create([
             'person_id' => $person->person_id,
             'birth_date' => $validated['birth_date'],
             'guardian_mobile_number' => $validated['guardian_mobile_number'],
             'graduated_high_school' => $validated['graduated_high_school'],
+            'photo_path' => $photoPath,
         ]);
 
         return redirect()->route('students.index')->with('success', 'Student enrolled successfully!');
@@ -97,5 +106,23 @@ class StudentController extends Controller
 
             return redirect()->back()->withErrors(['error' => 'Ocurrió un error al intentar eliminar el estudiante y la persona asociada.']);
         }
+    }
+
+    public function generateCarnetPdf($id)
+    {
+        $student = Student::with('person')->where('student_id', $id)->firstOrFail();
+
+        $data = [
+            'doi' => $student->person->doi,
+            'name' => $student->person->first_names . ' ' . $student->person->last_names,
+            'mobile_number' => $student->person->mobile_number,
+            'birth_date' => $student->birth_date,
+            'guardian_mobile_number' => $student->guardian_mobile_number,
+            'graduated_high_school' => $student->graduated_high_school,
+        ];
+
+        $pdf = Pdf::loadView('students.carnet', compact('data'));
+
+        return $pdf->stream('carnet.pdf');
     }
 }

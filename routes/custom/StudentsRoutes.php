@@ -10,4 +10,6 @@ Route::middleware(['auth'])->group(function () {
     Route::get('students/registrar', [StudentController::class, 'create'])->name('students.enroll');
     Route::post('students/registrar', [StudentController::class, 'store'])->name('students.enroll.store');
     Route::delete('students/registrar/{id}', [StudentController::class, 'destroy'])->name('students.destroy');
+
+    Route::get('/students/{id}/carnet', [StudentController::class, 'generateCarnetPdf'])->name('students.carnet');
 });

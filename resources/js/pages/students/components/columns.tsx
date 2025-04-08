@@ -1,14 +1,14 @@
 'use client';
 
-import { Button } from "@/components/ui/button"
+import { Button } from '@/components/ui/button';
 import { ColumnDef } from '@tanstack/react-table';
 
 import { router } from '@inertiajs/react';
 
-import { UserX } from "lucide-react"
+import { FileText } from 'lucide-react';
 
 export type Student = {
-    student_id:string
+    student_id: string;
     doi: string;
     first_name: string;
     last_name: string;
@@ -20,7 +20,7 @@ export type Student = {
 };
 
 export const columns: ColumnDef<Student>[] = [
-    { accessorKey: '_number', header: '#', cell: ({ row }) => row.index + 1, },
+    { accessorKey: '_number', header: '#', cell: ({ row }) => row.index + 1 },
 
     {
         accessorKey: 'doi',
@@ -64,13 +64,21 @@ export const columns: ColumnDef<Student>[] = [
                 }
             };
 
+            const handleGenerateCarnet = () => {
+                window.open(route('students.carnet', student.student_id), '_blank');
+            };
+
             return (
                 <div className="flex space-x-2">
-                    <Button variant="destructive" size="icon"  onClick={handleDelete}>
+                    {/* <Button variant="destructive" size="icon"  onClick={handleDelete}>
                     <UserX />
+                    </Button> */}
+
+                    <Button variant="outline" size="icon" onClick={handleGenerateCarnet}>
+                        <FileText />
                     </Button>
                 </div>
             );
         },
-    }
+    },
 ];
