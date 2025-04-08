@@ -14,13 +14,8 @@ import { Camera, Loader2 } from 'lucide-react';
 
 const FormSchema = z.object({
     doi: z.string().min(8, { message: 'El DNI debe tener 8 caracteres.' }).max(8),
-<<<<<<< HEAD
-    first_name: z.string().min(2, { message: 'El nombre es obligatorio.' }),
-    last_name: z.string().min(2, { message: 'El apellido es obligatorio.' }),
-=======
     first_names: z.string().min(2, { message: 'El nombre es obligatorio.' }),
     last_names: z.string().min(2, { message: 'El apellido es obligatorio.' }),
->>>>>>> 6da43fb66ad6e93385e4395cb047e3c9a94ad583
     phone_number: z.string().min(9, { message: 'El teléfono debe tener 9 dígitos.' }).max(9),
     birth_date: z.string().nonempty({ message: 'La fecha de nacimiento es obligatoria.' }),
     guardian_phone: z.string().min(9, { message: 'El teléfono del apoderado debe tener 9 dígitos.' }).max(9),
@@ -37,13 +32,8 @@ export function InputForm() {
         resolver: zodResolver(FormSchema),
         defaultValues: {
             doi: '',
-<<<<<<< HEAD
-            first_name: '',
-            last_name: '',
-=======
             first_names: '',
             last_names: '',
->>>>>>> 6da43fb66ad6e93385e4395cb047e3c9a94ad583
             phone_number: '',
             birth_date: '',
             guardian_phone: '',
@@ -57,21 +47,12 @@ export function InputForm() {
 
         const formData = new FormData();
         formData.append('doi', data.doi);
-<<<<<<< HEAD
-        formData.append('first_name', data.first_name);
-        formData.append('last_name', data.last_name);
-=======
         formData.append('first_names', data.first_names);
         formData.append('last_names', data.last_names);
->>>>>>> 6da43fb66ad6e93385e4395cb047e3c9a94ad583
         formData.append('phone_number', data.phone_number);
         formData.append('birth_date', data.birth_date);
         formData.append('guardian_phone', data.guardian_phone);
         formData.append('high_school_name', data.high_school_name);
-<<<<<<< HEAD
-        
-=======
->>>>>>> 6da43fb66ad6e93385e4395cb047e3c9a94ad583
 
         if (selectedFile) {
             formData.append('photo', selectedFile);

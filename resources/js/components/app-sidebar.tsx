@@ -19,13 +19,13 @@ const mainNavItems: NavItem[] = [
         icon: GraduationCap,
     },
     {
-        title: 'Enrolments',
-        href: '/enrolments',
+        title: 'Enrollments',
+        href: '/enrollments',
         icon: LayoutGrid,
     },
     {
-        title: 'Seasons',
-        href: '/seasons',
+        title: 'Ciclos Academicos',
+        href: '/academic-terms',
         icon: LayoutGrid,
     },
     {

@@ -16,14 +16,14 @@ class AcademicTermController extends Controller
     {
         $academicTerms = AcademicTerm::all(['id', 'name', 'start_date', 'end_date', 'monthly_cost', 'enrollment_cost']);
 
-        return Inertia::render('AcademicTerms/Index', [
+        return Inertia::render('academicTerms/index', [
             'academicTerms' => $academicTerms,
         ]);
     }
 
     public function create(): Response
     {
-        return Inertia::render('AcademicTerms/create');
+        return Inertia::render('academicTerms/create');
     }
 
     public function store(Request $request)

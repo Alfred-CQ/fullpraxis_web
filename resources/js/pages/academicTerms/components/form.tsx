@@ -37,7 +37,7 @@ export function SeasonForm() {
 
     // Función para manejar el envío del formulario
     function onSubmit(data: z.infer<typeof FormSchema>) {
-        router.post(route('seasons.store'), data);
+        router.post(route('academic-terms.store'), data);
     }
 
     return (
