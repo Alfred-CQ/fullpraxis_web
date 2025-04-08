@@ -27,9 +27,9 @@ class Person extends Model
     {
         return $this->hasOne(Teacher::class, 'person_id');
     }
-    public function attendance()
+    public function attendances()
     {
-        return $this->hasMany(Attendance::class, 'person_id');
+        return $this->hasMany(Attendance::class, 'person_id', 'id');
     }
     public function enrolment()
     {

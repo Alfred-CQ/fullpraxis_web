@@ -185,4 +185,30 @@ class StudentController extends Controller
 
         return $pdf->stream('carnet.pdf');
     }
+
+    public function attendanceReportPdf($id)
+    {
+        $student = Student::with('person.attendances')->where('id', $id)->firstOrFail();
+
+        $attendancesByDay = $student->person->attendances
+            ->sortBy('recorded_at')
+            ->groupBy(function ($attendance) {
+                return \Carbon\Carbon::parse($attendance->recorded_at)->format('Y-m-d');
+            });
+
+        $data = [
+            'student' => [
+                'student_id' => $student->id,
+                'doi' => $student->person->doi,
+                'first_names' => $student->person->first_names,
+                'last_names' => $student->person->last_names,
+                'phone_number' => $student->person->phone_number,
+            ],
+            'attendances' => $attendancesByDay,
+        ];
+
+        $pdf = Pdf::loadView('students.attendance-report-pdf', compact('data'));
+
+        return $pdf->stream('attendance-report.pdf');
+    }
 }
