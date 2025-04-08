@@ -10,12 +10,12 @@ import { FileText, History, UserPen } from 'lucide-react';
 export type Student = {
     student_id: string;
     doi: string;
-    first_name: string;
-    last_name: string;
-    mobile_number: string;
+    first_names: string;
+    last_names: string;
+    phone_number: string;
     //birth_date: string
-    guardian_mobile_number: string;
-    graduated_high_school: string;
+    guardian_phone: string;
+    high_school_name: string;
     created_at: string;
 };
 
@@ -27,15 +27,15 @@ export const columns: ColumnDef<Student>[] = [
         header: 'DNI',
     },
     {
-        accessorKey: 'first_name',
+        accessorKey: 'first_names',
         header: 'Nombres',
     },
     {
-        accessorKey: 'last_name',
+        accessorKey: 'last_names',
         header: 'Apellidos',
     },
     {
-        accessorKey: 'mobile_number',
+        accessorKey: 'phone_number',
         header: 'Teléfono',
     },
     //   {
@@ -43,11 +43,11 @@ export const columns: ColumnDef<Student>[] = [
     //     header: "Birth Date",
     //   },
     {
-        accessorKey: 'guardian_mobile_number',
+        accessorKey: 'guardian_phone',
         header: 'Apoderado',
     },
     // {
-    //     accessorKey: 'graduated_high_school',
+    //     accessorKey: 'high_school_name',
     //     header: 'Colegio de Egreso',
     // },
     {
