@@ -7,12 +7,12 @@ import { EditForm } from './components/form-edit';
 type StudentData = {
     student_id: string;
     doi: string;
-    first_name: string;
-    last_name: string;
-    mobile_number: string;
+    first_names: string;
+    last_names: string;
+    phone_number: string;
     birth_date: string;
-    guardian_mobile_number: string;
-    graduated_high_school: string;
+    guardian_phone: string;
+    high_school_name: string;
     photo_url?: string;
 };
 

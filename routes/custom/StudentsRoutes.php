@@ -14,4 +14,8 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/students/{id}/carnet', [StudentController::class, 'generateCarnetPdf'])->name('students.carnet');
     Route::get('/students/{id}/edit', [StudentController::class, 'edit'])->name('students.edit');
     Route::post('/students/{id}', [StudentController::class, 'update'])->name('students.update');
+
+
+    Route::get('/students/{id}/attendance-report-pdf', [StudentController::class, 'attendanceReportPdf'])->name('students.attendance-report-pdf');
+    Route::get('/students/{id}/attendance-report', [StudentController::class, 'attendanceReportPdf'])->name('students.attendance-report');
 });

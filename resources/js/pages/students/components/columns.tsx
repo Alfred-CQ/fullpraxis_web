@@ -85,7 +85,11 @@ export const columns: ColumnDef<Student>[] = [
                         <FileText />
                     </Button>
 
-                    <Button variant="outline" size="icon">
+                    <Button
+                        variant="outline"
+                        size="icon"
+                        onClick={() => window.open(route('students.attendance-report-pdf', student.student_id), '_blank')}
+                    >
                         <History />
                     </Button>
                 </div>
