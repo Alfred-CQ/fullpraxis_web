@@ -33,7 +33,7 @@ class Person extends Model
     }
     public function enrollment() 
     {
-        return $this->hasMany(Enrollment::class, 'person_id');
+        return $this->hasMany(Enrollment::class, 'person_id', 'id');
     }
     /*
     public function scopeFilter($query, array $filters)

@@ -13,6 +13,8 @@ use App\Models\Student;
 use Inertia\Inertia;
 use Inertia\Response;
 
+use Illuminate\Support\Carbon;
+
 use Barryvdh\DomPDF\Facade\Pdf;
 
 class StudentController extends Controller
@@ -48,10 +50,10 @@ class StudentController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'doi' => 'required|string|size:8|unique:persons,doi',
-            'first_name' => 'required|string|max:100',
-            'last_name' => 'required|string|max:100',
-            'mobile_number' => 'required|string|size:9',
+            'doi' => 'required|string|size:8|unique:people,doi',
+            'first_names' => 'required|string|max:100',
+            'last_names' => 'required|string|max:100',
+            'phone_number' => 'required|string|size:9',
             'birth_date' => 'required|date',
             'guardian_phone' => 'required|string|size:9',
             'high_school_name' => 'required|string|max:100',
@@ -109,10 +111,10 @@ class StudentController extends Controller
     {
 
         $validated = $request->validate([
-            'doi' => 'required|string|size:8|unique:persons,doi,' . $id . ',student_id',
-            'first_name' => 'required|string|max:100',
-            'last_name' => 'required|string|max:100',
-            'mobile_number' => 'required|string|size:9',
+            'doi' => 'required|string|size:8|unique:people,doi,' . $id . ',id',
+            'first_names' => 'required|string|max:100',
+            'last_names' => 'required|string|max:100',
+            'phone_number' => 'required|string|size:9',
             'birth_date' => 'required|date',
             'guardian_phone' => 'required|string|size:9',
             'high_school_name' => 'required|string|max:100',
@@ -124,9 +126,9 @@ class StudentController extends Controller
 
         $person->update([
             'doi' => $validated['doi'],
-            'first_names' => $validated['first_names'],
-            'last_names' => $validated['last_names'],
-            'phone_number' => $validated['phone_number'],
+            'first_names' => $validated['first_names'],  // Corregido
+            'last_names' => $validated['last_names'],    // Corregido
+            'phone_number' => $validated['phone_number'], // Corregido
         ]);
 
         if ($request->hasFile('photo')) {
@@ -145,11 +147,11 @@ class StudentController extends Controller
 
     public function destroy($id)
     {
-        $student = Student::where('student_id', $id)->firstOrFail();
+        $student = Student::where('id', $id)->firstOrFail();
         try {
             DB::beginTransaction();
 
-            $person = Person::where('person_id', $student->person_id)->first();
+            $person = Person::where('id', $student->person_id)->first();
 
             $student->delete();
 
@@ -210,4 +212,45 @@ class StudentController extends Controller
 
         return $pdf->stream('attendance-report.pdf');
     }
+
+    public function find_student(Request $request)
+    {
+        $request->validate([
+            'doi' => 'required|string|max:8',
+        ]);
+        
+        $doi = $request->input('doi');
+        
+        $persona = Person::with(['student', 'enrollment' => function($query) {
+            $query->latest('enrollment_date');
+        }])->where('doi', $doi)->first();
+    
+        if (!$persona) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Alumno no encontrado',
+            ], 404);
+        }
+    
+        $matricula = $persona->enrollment->first();
+        $diasRestantes = $matricula ? Carbon::now()->diffInDays($matricula->fecha_vencimiento, false) : null;
+    
+        return response()->json([
+            'success' => true,
+            'alumno' => [
+                'id' => $persona->id,
+                'first_names' => $persona->first_names,
+                'last_names' => $persona->last_names,
+                'doi' => $persona->doi,
+                'guardian_phone' => $persona->student->guardian_phone ?? 'No disponible', 
+            ],
+            'matricula' => [
+                'dias_restantes' => $diasRestantes, 
+                'status_deuda' => $matricula ? $matricula->debt_status : 'Sin matrícula',
+            ],
+        ]);
+    }
+
+
+
 }
