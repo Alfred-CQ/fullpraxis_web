@@ -174,7 +174,7 @@ export function InputForm() {
                                         <FormItem>
                                             <FormLabel>Fecha de Nacimiento</FormLabel>
                                             <FormControl>
-                                                <Input type="date" {...field} />
+                                                <Input type="date" {...field} className="[&::-webkit-calendar-picker-indicator]:invert-[0.5]"/>
                                             </FormControl>
                                             <FormMessage />
                                         </FormItem>
