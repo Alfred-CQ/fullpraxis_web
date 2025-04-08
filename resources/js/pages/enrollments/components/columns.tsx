@@ -6,17 +6,16 @@ import { router } from '@inertiajs/react';
 import { ColumnDef } from '@tanstack/react-table';
 
 export type Enrollment = {
-    Enrollment_id: number;
-    Enrollment_code: string;
+    id: number;
     study_area: string;
-    Enrollment_date: string;
+    enrollment_date: string;
     start_date: string;
     end_date: string;
     due_date: string;
     total_payment: number;
-    debt_status: boolean;
+    debt_status: string;
     student_doi: string;
-    season_name: string;
+    academic_term_name: string;
 };
 
 export const columns: ColumnDef<Enrollment>[] = [
@@ -30,23 +29,19 @@ export const columns: ColumnDef<Enrollment>[] = [
         header: 'DNI del Estudiante',
     },
     {
-        accessorKey: 'Enrollment_code',
-        header: 'Código de Matrícula',
-    },
-    {
         accessorKey: 'study_area',
         header: 'Área de Estudio',
     },
-    // {
-    //     accessorKey: 'Enrollment_date',
-    //     header: 'Fecha de Matrícula',
-    //     cell: ({ getValue }) => new Date(getValue() as string).toLocaleDateString(),
-    // },
-    // {
-    //     accessorKey: 'start_date',
-    //     header: 'Fecha de Inicio',
-    //     cell: ({ getValue }) => new Date(getValue() as string).toLocaleDateString(),
-    // },
+    {
+        accessorKey: 'enrollment_date',
+        header: 'Fecha de Matrícula',
+        cell: ({ getValue }) => new Date(getValue() as string).toLocaleDateString(),
+    },
+    {
+        accessorKey: 'start_date',
+        header: 'Fecha de Inicio',
+        cell: ({ getValue }) => new Date(getValue() as string).toLocaleDateString(),
+    },
     {
         accessorKey: 'end_date',
         header: 'Fecha de Fin',
@@ -70,17 +65,14 @@ export const columns: ColumnDef<Enrollment>[] = [
 
             let colorClass = '';
             switch (status) {
-                case 'Pagado':
+                case 'Paid':
                     colorClass = 'bg-green-400 text-white';
                     break;
-                case 'Pendiente':
+                case 'Pending':
                     colorClass = 'bg-yellow-400 text-black';
                     break;
-                case 'Vencido':
+                case 'Overdue':
                     colorClass = 'bg-red-400 text-white';
-                    break;
-                case 'Adelanto':
-                    colorClass = 'bg-blue-400 text-white';
                     break;
                 default:
                     colorClass = 'bg-gray-400 text-white';
@@ -89,25 +81,20 @@ export const columns: ColumnDef<Enrollment>[] = [
             return <Badge className={colorClass}>{status}</Badge>;
         },
     },
-    // {
-    //     accessorKey: 'season_name',
-    //     header: 'Nombre del Ciclo',
-    // },
+    {
+        accessorKey: 'academic_term_name',
+        header: 'Nombre del Ciclo Académico',
+    },
     {
         id: 'actions',
         header: 'Acciones',
         cell: ({ row }) => {
-            const Enrollment = row.original;
-           // console.log(route('Enrollments.edit', Enrollment.Enrollment_id));
-           //console.log("Enrollment_id:", Enrollment.Enrollment_id);
+            const enrollment = row.original;
             return (
                 <div className="flex space-x-2">
-                    <Button
-    variant="outline"
-    size="sm"
-    onClick={() => router.get(route('Enrollments.edit', { Enrollment: Enrollment.Enrollment_id }))}>
-    Editar
-</Button>
+                    <Button variant="outline" size="sm" onClick={() => router.get(route('enrollments.edit', { enrollment: enrollment.id }))}>
+                        Editar
+                    </Button>
                 </div>
             );
         },

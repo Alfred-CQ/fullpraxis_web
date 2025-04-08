@@ -5,6 +5,10 @@ import { SeasonForm } from './components/form';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
+        title: 'Ciclos Academicos',
+        href: '/academic-terms',
+    },
+    {
         title: 'Registro',
         href: '/students/registro',
     },

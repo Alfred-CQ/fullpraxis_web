@@ -19,7 +19,7 @@ const mainNavItems: NavItem[] = [
         icon: GraduationCap,
     },
     {
-        title: 'Enrollments',
+        title: 'Matrículas',
         href: '/enrollments',
         icon: LayoutGrid,
     },

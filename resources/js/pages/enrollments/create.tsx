@@ -5,25 +5,29 @@ import { EnrollmentForm } from './components/form';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
-        title: 'Enrollment',
+        title: 'Matrículas',
+        href: '/enrollments',
+    },
+    {
+        title: 'Registro',
         href: '/enrollments/create',
     },
 ];
 
 interface Props {
-    seasons: { season_id: number; name: string }[];
+    academic_terms: { id: number; name: string }[];
 }
 
 
 
-export default function Dashboard({ seasons }: Props) {
+export default function Dashboard({ academic_terms }: Props) {
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Registro" />
             <div className="flex h-full flex-1 flex-col gap-4 rounded-xl p-4">
-                <div className="flex h-full items-center justify-center border-sidebar-border/70 dark:border-sidebar-border relative min-h-[100vh] flex-1 overflow-hidden rounded-xl border md:min-h-min">
+                <div className="border-sidebar-border/70 dark:border-sidebar-border relative flex h-full min-h-[100vh] flex-1 items-center justify-center overflow-hidden rounded-xl border md:min-h-min">
                     <div className="w-full max-w-lg p-6">
-                        <EnrollmentForm seasons={seasons} />
+                        <EnrollmentForm seasons={academic_terms} />
                     </div>
                 </div>
             </div>

@@ -21,7 +21,7 @@ type academicTerm = {
 const breadcrumbs: BreadcrumbItem[] = [
     {
         title: 'Ciclos Academicos',
-        href: '/academicTerms',
+        href: '/academic-terms',
     },
 ];
 

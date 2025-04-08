@@ -26,12 +26,12 @@ class Enrollment extends Model
 
     public function person()
     {
-        return $this->belongsTo(Person::class, 'person_id', 'person_id');
+        return $this->belongsTo(Person::class, 'person_id', 'id');
     }
 
     public function academicTerm()
     {
-        return $this->belongsTo(AcademicTerm::class, 'academic_term_id', 'academic_term_id');
+        return $this->belongsTo(AcademicTerm::class, 'academic_term_id', 'id');
     }
 
     public function receipts()

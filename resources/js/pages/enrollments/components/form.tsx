@@ -28,7 +28,7 @@ const FormSchema = z.object({
     debt_status: z.enum(EstadoDeuda, { errorMap: () => ({ message: 'Debe seleccionar un estado de deuda válido.' }) }),
 });
 
-export function EnrollmentForm({ seasons }: { seasons: { season_id: number; name: string }[] }) {
+export function EnrollmentForm({ seasons }: { seasons: { id: number; name: string }[] }) {
     const form = useForm<z.infer<typeof FormSchema>>({
         resolver: zodResolver(FormSchema),
         defaultValues: {
@@ -67,7 +67,6 @@ export function EnrollmentForm({ seasons }: { seasons: { season_id: number; name
                     )}
                 />
 
-
                 <FormField
                     control={form.control}
                     name="season_id"
@@ -81,7 +80,7 @@ export function EnrollmentForm({ seasons }: { seasons: { season_id: number; name
                                     </SelectTrigger>
                                     <SelectContent>
                                         {seasons.map((season) => (
-                                            <SelectItem key={season.season_id} value={season.season_id.toString()}>
+                                            <SelectItem key={season.id} value={season.name.toString()}>
                                                 {season.name}
                                             </SelectItem>
                                         ))}
