@@ -11,25 +11,32 @@ import { Input } from '@/components/ui/input';
 
 const FormSchema = z.object({
     name: z.string().min(2, { message: 'El nombre es obligatorio.' }),
-    monthly_discount: z.string().nullable(),
-    enrollment_discount: z.string().nullable(),
-    description: z.string().nullable(),
+    monthly_discount: z.coerce.number()
+        .min(0, { message: 'El descuento no puede ser negativo' })
+        .default(0),
+    enrollment_discount: z.coerce.number()
+        .min(0, { message: 'El descuento no puede ser negativo' })
+        .default(0),
+    description: z.string().nullable().optional(),
 });
 
+
 export function DiscountForm() {
-    const form = useForm<z.infer<typeof FormSchema>>({
-        resolver: zodResolver(FormSchema),
+    const form = useForm({
+        resolver: zodResolver(FormSchema) as any,
         defaultValues: {
             name: '',
-            monthly_discount: '',
-            enrollment_discount: '',
+            monthly_discount: 0,
+            enrollment_discount: 0,
             description: '',
         },
     });
 
-    function onSubmit(data: z.infer<typeof FormSchema>) {
+    type FormValues = z.infer<typeof FormSchema>;
+
+    const onSubmit = (data: FormValues) => {
         router.post(route('discounts.store'), data);
-    }
+    };
 
     return (
         <Form {...form}>
@@ -56,7 +63,7 @@ export function DiscountForm() {
                         <FormItem>
                             <FormLabel>Descuento Mensual</FormLabel>
                             <FormControl>
-                                <Input type="number" placeholder="0.00" {...field} value={field.value ?? ''} />
+                                <Input type="number" placeholder="0.00" {...field} onChange={(e) => field.onChange(Number(e.target.value))} />
                             </FormControl>
                             <FormMessage />
                         </FormItem>

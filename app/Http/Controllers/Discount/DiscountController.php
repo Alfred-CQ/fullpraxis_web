@@ -31,9 +31,9 @@ class DiscountController extends Controller
     {
         $validated = $request->validate([
             'name' => 'required|string|max:100',
-            'monthly_discount' => 'nullable|numeric|min:0',
-            'enrollment_discount' => 'nullable|numeric|min:0',
-            'description' => 'nullable|string|max:255',
+            'monthly_discount' => 'nullable|min:0',
+            'enrollment_discount' => 'nullable|min:0',
+            'description' => 'nullable|string',
         ]);
 
         Discount::create($validated);
