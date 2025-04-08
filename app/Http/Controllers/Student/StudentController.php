@@ -22,7 +22,7 @@ class StudentController extends Controller
     {
         $students = Student::with('person')->get()->map(function ($student) {
             return [
-                'student_id' => $student->student_id,
+                'student_id' => $student->id,
                 'doi' => $student->person->doi,
                 'first_name' => $student->person->first_names,
                 'last_name' => $student->person->last_names,
@@ -48,7 +48,7 @@ class StudentController extends Controller
     {
 
         $validated = $request->validate([
-            'doi' => 'required|string|size:8|unique:persons,doi',
+            'doi' => 'required|string|size:8|unique:people,doi',
             'first_name' => 'required|string|max:100',
             'last_name' => 'required|string|max:100',
             'mobile_number' => 'required|string|size:9',
@@ -105,7 +105,7 @@ class StudentController extends Controller
     public function update(Request $request, $id)
     {
         $validated = $request->validate([
-            'doi' => 'required|string|size:8|unique:persons,doi,' . $id . ',student_id',
+            'doi' => 'required|string|size:8|unique:people,doi,' . $id . ',student_id',
             'first_name' => 'required|string|max:100',
             'last_name' => 'required|string|max:100',
             'mobile_number' => 'required|string|size:9',
