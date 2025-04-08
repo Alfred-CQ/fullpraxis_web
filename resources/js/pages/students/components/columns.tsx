@@ -5,7 +5,7 @@ import { ColumnDef } from '@tanstack/react-table';
 
 import { router } from '@inertiajs/react';
 
-import { FileText } from 'lucide-react';
+import { FileText, History, UserPen } from 'lucide-react';
 
 export type Student = {
     student_id: string;
@@ -44,24 +44,28 @@ export const columns: ColumnDef<Student>[] = [
     //   },
     {
         accessorKey: 'guardian_mobile_number',
-        header: 'Teléfono del Apoderado',
+        header: 'Apoderado',
     },
-    {
-        accessorKey: 'graduated_high_school',
-        header: 'Colegio de Egreso',
-    },
+    // {
+    //     accessorKey: 'graduated_high_school',
+    //     header: 'Colegio de Egreso',
+    // },
     {
         id: 'actions',
         header: 'Acciones',
         cell: ({ row }) => {
             const student = row.original;
 
-            const handleDelete = () => {
-                if (confirm(`¿Estás seguro de que deseas eliminar al estudiante con DNI ${student.doi}?`)) {
-                    router.delete(route('students.destroy', student.student_id), {
-                        onSuccess: () => alert('Estudiante eliminado correctamente'),
-                    });
-                }
+            // const handleDelete = () => {
+            //     if (confirm(`¿Estás seguro de que deseas eliminar al estudiante con DNI ${student.doi}?`)) {
+            //         router.delete(route('students.destroy', student.student_id), {
+            //             onSuccess: () => alert('Estudiante eliminado correctamente'),
+            //         });
+            //     }
+            // };
+
+            const handleEdit = () => {
+                router.visit(route('students.edit', student.student_id));
             };
 
             const handleGenerateCarnet = () => {
@@ -73,9 +77,16 @@ export const columns: ColumnDef<Student>[] = [
                     {/* <Button variant="destructive" size="icon"  onClick={handleDelete}>
                     <UserX />
                     </Button> */}
+                    <Button variant="outline" size="icon" onClick={handleEdit}>
+                        <UserPen />
+                    </Button>
 
                     <Button variant="outline" size="icon" onClick={handleGenerateCarnet}>
                         <FileText />
+                    </Button>
+
+                    <Button variant="outline" size="icon">
+                        <History />
                     </Button>
                 </div>
             );

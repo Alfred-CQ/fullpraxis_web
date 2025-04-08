@@ -5,7 +5,7 @@ import { InputForm } from './components/form';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
-        title: 'Student',
+        title: 'Alumnos',
         href: '/students',
     },
     {
@@ -14,7 +14,7 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
 ];
 
-export default function Dashboard() {
+export default function StudentRegister() {
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Registro" />
