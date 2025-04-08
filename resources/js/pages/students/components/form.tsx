@@ -14,12 +14,12 @@ import { Camera, Loader2 } from 'lucide-react';
 
 const FormSchema = z.object({
     doi: z.string().min(8, { message: 'El DNI debe tener 8 caracteres.' }).max(8),
-    first_name: z.string().min(2, { message: 'El nombre es obligatorio.' }),
-    last_name: z.string().min(2, { message: 'El apellido es obligatorio.' }),
-    mobile_number: z.string().min(9, { message: 'El teléfono debe tener 9 dígitos.' }).max(9),
+    first_names: z.string().min(2, { message: 'El nombre es obligatorio.' }),
+    last_names: z.string().min(2, { message: 'El apellido es obligatorio.' }),
+    phone_number: z.string().min(9, { message: 'El teléfono debe tener 9 dígitos.' }).max(9),
     birth_date: z.string().nonempty({ message: 'La fecha de nacimiento es obligatoria.' }),
-    guardian_mobile_number: z.string().min(9, { message: 'El teléfono del apoderado debe tener 9 dígitos.' }).max(9),
-    graduated_high_school: z.string().min(2, { message: 'El colegio de egreso es obligatorio.' }),
+    guardian_phone: z.string().min(9, { message: 'El teléfono del apoderado debe tener 9 dígitos.' }).max(9),
+    high_school_name: z.string().min(2, { message: 'El colegio de egreso es obligatorio.' }),
 });
 
 export function InputForm() {
@@ -31,12 +31,12 @@ export function InputForm() {
         resolver: zodResolver(FormSchema),
         defaultValues: {
             doi: '',
-            first_name: '',
-            last_name: '',
-            mobile_number: '',
+            first_names: '',
+            last_names: '',
+            phone_number: '',
             birth_date: '',
-            guardian_mobile_number: '',
-            graduated_high_school: '',
+            guardian_phone: '',
+            high_school_name: '',
         },
     });
 
@@ -45,12 +45,12 @@ export function InputForm() {
 
         const formData = new FormData();
         formData.append('doi', data.doi);
-        formData.append('first_name', data.first_name);
-        formData.append('last_name', data.last_name);
-        formData.append('mobile_number', data.mobile_number);
+        formData.append('first_names', data.first_names);
+        formData.append('last_names', data.last_names);
+        formData.append('phone_number', data.phone_number);
         formData.append('birth_date', data.birth_date);
-        formData.append('guardian_mobile_number', data.guardian_mobile_number);
-        formData.append('graduated_high_school', data.graduated_high_school);
+        formData.append('guardian_phone', data.guardian_phone);
+        formData.append('high_school_name', data.high_school_name);
 
         if (selectedFile) {
             formData.append('photo', selectedFile);
@@ -125,7 +125,7 @@ export function InputForm() {
 
                                 <FormField
                                     control={form.control}
-                                    name="first_name"
+                                    name="first_names"
                                     render={({ field }) => (
                                         <FormItem>
                                             <FormLabel>Nombres</FormLabel>
@@ -139,7 +139,7 @@ export function InputForm() {
 
                                 <FormField
                                     control={form.control}
-                                    name="last_name"
+                                    name="last_names"
                                     render={({ field }) => (
                                         <FormItem>
                                             <FormLabel>Apellidos</FormLabel>
@@ -153,7 +153,7 @@ export function InputForm() {
 
                                 <FormField
                                     control={form.control}
-                                    name="mobile_number"
+                                    name="phone_number"
                                     render={({ field }) => (
                                         <FormItem>
                                             <FormLabel>Teléfono</FormLabel>
@@ -181,7 +181,7 @@ export function InputForm() {
 
                                 <FormField
                                     control={form.control}
-                                    name="guardian_mobile_number"
+                                    name="guardian_phone"
                                     render={({ field }) => (
                                         <FormItem>
                                             <FormLabel>Teléfono del Apoderado</FormLabel>
@@ -195,7 +195,7 @@ export function InputForm() {
 
                                 <FormField
                                     control={form.control}
-                                    name="graduated_high_school"
+                                    name="high_school_name"
                                     render={({ field }) => (
                                         <FormItem>
                                             <FormLabel>Colegio de Egreso</FormLabel>

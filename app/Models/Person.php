@@ -10,6 +10,7 @@ class Person extends Model
     use HasFactory;
 
     protected $table = 'people';
+    protected $primaryKey = 'id';
     protected $fillable = [
         'doi',
         'first_names',
@@ -18,21 +19,21 @@ class Person extends Model
         'person_type',
     ];
 
-    public function student() 
+    public function student()
     {
         return $this->hasOne(Student::class, 'person_id');
     }
-    public function teacher() 
+    public function teacher()
     {
         return $this->hasOne(Teacher::class, 'person_id');
     }
-    public function attendance() 
+    public function attendance()
     {
         return $this->hasMany(Attendance::class, 'person_id');
     }
-    public function enrolment() 
+    public function enrolment()
     {
-        return $this->hasMany(Enrolment::class, 'person_id');
+        //  return $this->hasMany(Enrolment::class, 'person_id');
     }
     /*
     public function scopeFilter($query, array $filters)
