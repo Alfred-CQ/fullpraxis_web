@@ -14,6 +14,7 @@ type Discount = {
     name: string;
     monthly_discount: number;
     enrollment_discount: number;
+    description: string | null;
 };
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -42,6 +43,7 @@ export default function DiscountsView({ discounts }: { discounts: Discount[] }) 
                                 name={discount.name}
                                 monthly_discount={discount.monthly_discount}
                                 enrollment_discount={discount.enrollment_discount}
+                                description={discount.description || 'Descuentos disponibles'}
                             />
                         ))}
                     </div>

@@ -13,6 +13,7 @@ const FormSchema = z.object({
     name: z.string().min(2, { message: 'El nombre es obligatorio.' }),
     monthly_discount: z.string().nullable(),
     enrollment_discount: z.string().nullable(),
+    description: z.string().nullable(),
 });
 
 export function DiscountForm() {
@@ -22,6 +23,7 @@ export function DiscountForm() {
             name: '',
             monthly_discount: '',
             enrollment_discount: '',
+            description: '',
         },
     });
 
@@ -69,6 +71,25 @@ export function DiscountForm() {
                             <FormLabel>Descuento de Matrícula</FormLabel>
                             <FormControl>
                                 <Input type="number" placeholder="0.00" {...field} value={field.value ?? ''} />
+                            </FormControl>
+                            <FormMessage />
+                        </FormItem>
+                    )}
+                />
+
+                {/* Campo: Descripción */}
+                <FormField
+                    control={form.control}
+                    name="description"
+                    render={({ field }) => (
+                        <FormItem>
+                            <FormLabel>Descripción</FormLabel>
+                            <FormControl>
+                                <Input
+                                    placeholder="Descripción del descuento (opcional)"
+                                    {...field}
+                                    value={field.value ?? ''}  // Aseguramos que el valor sea una cadena vacía si es null
+                                />
                             </FormControl>
                             <FormMessage />
                         </FormItem>

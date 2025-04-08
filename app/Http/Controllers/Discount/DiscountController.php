@@ -16,7 +16,7 @@ class DiscountController extends Controller
     {
         $discounts = Discount::all(['id', 'name', 'monthly_discount', 'enrollment_discount', 'description']);
 
-        return Inertia::render('Discounts/Index', [
+        return Inertia::render('discounts/index', [
             'discounts' => $discounts,
         ]);
     }
@@ -24,7 +24,7 @@ class DiscountController extends Controller
 
     public function create(): Response
     {
-        return Inertia::render('Discounts/create');
+        return Inertia::render('discounts/create');
     }
 
     public function store(Request $request)
