@@ -66,7 +66,7 @@ class EnrollmentController extends Controller
         $person = Person::where('doi', $validated['doi'])->firstOrFail();
 
         Enrollment::create([
-            'person_id' => $person->person_id,
+            'person_id' => $person->id,
             'academic_term_id' => $validated['academic_term_id'],
             'study_area' => $validated['study_area'],
             'enrollment_date' => $validated['enrollment_date'],
@@ -83,12 +83,11 @@ class EnrollmentController extends Controller
     public function edit($id): Response
     {
         $enrollment = Enrollment::with(['person', 'academicTerm'])->findOrFail($id);
+        $academicTerms = AcademicTerm::all(['id', 'name']);
 
-        return Inertia::render('Enrollments/edit', [
+        return Inertia::render('enrollments/edit', [
             'enrollment' => [
                 'id' => $enrollment->id,
-                'person_doi' => $enrollment->person->doi,
-                'academic_term_id' => $enrollment->academic_term_id,
                 'study_area' => $enrollment->study_area,
                 'enrollment_date' => $enrollment->enrollment_date,
                 'start_date' => $enrollment->start_date,
@@ -96,7 +95,9 @@ class EnrollmentController extends Controller
                 'due_date' => $enrollment->due_date,
                 'total_payment' => $enrollment->total_payment,
                 'debt_status' => $enrollment->debt_status,
+                'academic_term_id' => $enrollment->academic_term_id,
             ],
+            'academic_terms' => $academicTerms,
         ]);
     }
 
@@ -110,8 +111,9 @@ class EnrollmentController extends Controller
             'end_date' => 'required|date',
             'due_date' => 'required|date',
             'total_payment' => 'required|numeric|min:0',
-            'debt_status' => 'required|in:Paid,Pending,Overdue',
         ]);
+
+
 
         $enrollment = Enrollment::findOrFail($id);
         $enrollment->update($validated);
