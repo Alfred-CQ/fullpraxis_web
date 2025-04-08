@@ -4,15 +4,15 @@ import { NavUser } from '@/components/nav-user';
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/react';
-import { BookOpen, CalendarClock, Folder, GraduationCap, LayoutGrid } from 'lucide-react';
+import { BookOpen, CalendarClock, CirclePercentIcon, FilePen, Folder, GraduationCap, LayoutGrid, ReceiptTextIcon } from 'lucide-react';
 import AppLogo from './app-logo';
 
 const mainNavItems: NavItem[] = [
-    {
-        title: 'Dashboard',
-        href: '/dashboard',
-        icon: LayoutGrid,
-    },
+    // { 
+    //     title: 'Dashboard',
+    //     href: '/dashboard',
+    //     icon: LayoutGrid,
+    // },
     {
         title: 'Alumnos',
         href: '/students',
@@ -21,7 +21,12 @@ const mainNavItems: NavItem[] = [
     {
         title: 'Matrículas',
         href: '/enrollments',
-        icon: LayoutGrid,
+        icon: FilePen,
+    },
+    {
+        title: 'Boletas',
+        href: '/receipts',
+        icon: ReceiptTextIcon,
     },
     {
         title: 'Ciclos Academicos',
@@ -31,7 +36,7 @@ const mainNavItems: NavItem[] = [
     {
         title: 'Descuentos',
         href: '/discounts',
-        icon: LayoutGrid,
+        icon: CirclePercentIcon,
     },
 ];
 
@@ -55,7 +60,7 @@ export function AppSidebar() {
                 <SidebarMenu>
                     <SidebarMenuItem>
                         <SidebarMenuButton size="lg" asChild>
-                            <Link href="/dashboard" prefetch>
+                            <Link href="/students" prefetch>
                                 <AppLogo />
                             </Link>
                         </SidebarMenuButton>
@@ -68,7 +73,7 @@ export function AppSidebar() {
             </SidebarContent>
 
             <SidebarFooter>
-                <NavFooter items={footerNavItems} className="mt-auto" />
+                {/* <NavFooter items={footerNavItems} className="mt-auto" /> */}
                 <NavUser />
             </SidebarFooter>
         </Sidebar>

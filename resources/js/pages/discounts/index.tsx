@@ -19,7 +19,7 @@ type Discount = {
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
-        title: 'Discounts',
+        title: 'Descuentos',
         href: '/discounts',
     },
 ];
@@ -27,7 +27,7 @@ const breadcrumbs: BreadcrumbItem[] = [
 export default function DiscountsView({ discounts }: { discounts: Discount[] }) {
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title="Discounts" />
+            <Head title="Descuentos" />
             <div className="flex h-full flex-1 flex-col gap-4 rounded-xl p-4">
                 <div className="flex justify-end">
                     <Button variant="outline" size="sm" onClick={() => router.get(route('discounts.create'))}>
