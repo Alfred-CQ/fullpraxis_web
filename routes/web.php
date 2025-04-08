@@ -20,3 +20,4 @@ require __DIR__ . '/custom/StudentsRoutes.php';
 require __DIR__ . '/custom/AcademicTermRoutes.php';
 require __DIR__ . '/custom/DiscountsRoutes.php';
 require __DIR__ . '/custom/EnrollmentRoutes.php';
+require __DIR__ . '/custom/ReceiptsRoutes.php';

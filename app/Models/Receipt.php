@@ -14,7 +14,7 @@ class Receipt extends Model
     protected $fillable = [
         'enrollment_id',
         'discount_id',
-        'receipt_date',
+        'receipt_code',
         'payment_date',
         'enrollment_payment',
         'monthly_payment',
@@ -23,11 +23,11 @@ class Receipt extends Model
 
     public function enrollment()
     {
-        return $this->belongsTo(Enrollment::class, 'enrollment_id', 'enrollment_id');
+        return $this->belongsTo(Enrollment::class, 'enrollment_id', 'id');
     }
 
     public function discount()
     {
-        return $this->belongsTo(Discount::class, 'discount_id', 'discount_id');
+        return $this->belongsTo(Discount::class, 'discount_id', 'id');
     }
 }

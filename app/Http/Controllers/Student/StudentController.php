@@ -119,7 +119,6 @@ class StudentController extends Controller
             'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
-
         $student = Student::where('id', $id)->firstOrFail();
         $person = $student->person;
 
