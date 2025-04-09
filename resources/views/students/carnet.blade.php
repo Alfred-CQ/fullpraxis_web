@@ -1,20 +1,31 @@
 <!DOCTYPE html>
-<html lang="en">
-
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Carnet de Estudiante</title>
+    <title>Carnet</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+        }
+        .carnet-container {
+            width: 600px;  
+            position: relative;
+            top: 0;
+            left: 0;
+        }
+
+        .carnet-image {
+            width: 100%;  /* Asegúrate de que la imagen ocupe todo el ancho del contenedor */
+            height: auto; /* Mantén la proporción de la imagen */
+        }
+    </style>
 </head>
-
 <body>
-    <h1>Carnet de Estudiante</h1>
-    <p><strong>DNI:</strong> {{ $data['doi'] }}</p>
-    <p><strong>Nombre:</strong> {{ $data['name'] }}</p>
-    <p><strong>Teléfono:</strong> {{ $data['phone_number'] }}</p>
-    <p><strong>Fecha de Nacimiento:</strong> {{ $data['birth_date'] }}</p>
-    <p><strong>Teléfono del Apoderado:</strong> {{ $data['guardian_phone'] }}</p>
-    <p><strong>Colegio de Egreso:</strong> {{ $data['high_school_name'] }}</p>
+    <div class="carnet-container">
+        <!-- Coloca la imagen del carnet -->
+        <img class="carnet-image" src="data:image/jpeg;base64,{{ base64_encode($imageData) }}" alt="Carnet">
+    </div>
 </body>
-
 </html>

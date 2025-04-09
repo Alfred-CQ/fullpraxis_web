@@ -63,6 +63,14 @@ export const columns: ColumnDef<Enrollment>[] = [
         cell: ({ getValue }) => {
             const status = getValue() as string;
 
+            const debtStatusTranslations = {
+                'Paid': 'Pagado',
+                'Pending': 'Pendiente',
+                'Overdue': 'Vencido'
+            };
+
+            const translatedStatus = debtStatusTranslations[status as keyof typeof debtStatusTranslations] || status;
+
             let colorClass = '';
             switch (status) {
                 case 'Paid':
@@ -78,7 +86,7 @@ export const columns: ColumnDef<Enrollment>[] = [
                     colorClass = 'bg-gray-400 text-white';
             }
 
-            return <Badge className={colorClass}>{status}</Badge>;
+            return <Badge className={colorClass}>{translatedStatus}</Badge>;
         },
     },
     {

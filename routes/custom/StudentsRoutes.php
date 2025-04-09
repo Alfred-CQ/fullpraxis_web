@@ -12,6 +12,7 @@ Route::middleware(['auth'])->group(function () {
     Route::delete('students/registrar/{id}', [StudentController::class, 'destroy'])->name('students.destroy');
 
     Route::get('/students/{id}/carnet', [StudentController::class, 'generateCarnetPdf'])->name('students.carnet');
+    Route::get('/students/carnets', [StudentController::class, 'generateCarnetBatchPdf'])->name('students.carnets');
     Route::get('/students/{id}/edit', [StudentController::class, 'edit'])->name('students.edit');
     Route::post('/students/{id}', [StudentController::class, 'update'])->name('students.update');
 

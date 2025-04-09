@@ -12,7 +12,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 
 // Enum definitions
 const AreaDeEstudios = ['Ingenierias', 'Biomedicas', 'Sociales'] as const;
-const EstadoDeuda = ['Paid', 'Pending', 'Overdue'] as const;
+const EstadoDeuda = ['Pagado', 'Pendiente', 'Vencido'] as const;
 
 // Validation schema with Zod
 const FormSchema = z.object({
