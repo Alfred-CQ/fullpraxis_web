@@ -23,10 +23,10 @@ class EnrollmentController extends Controller
                 return [
                     'id' => $enrollment->id,
                     'study_area' => $enrollment->study_area,
-                    'enrollment_date' => $enrollment->enrollment_date,
-                    'start_date' => $enrollment->start_date,
-                    'end_date' => $enrollment->end_date,
-                    'due_date' => $enrollment->due_date,
+                    'enrollment_date' => \Carbon\Carbon::parse($enrollment->enrollment_date)->format('Y-m-d'),
+                    'start_date' => \Carbon\Carbon::parse($enrollment->start_date)->format('Y-m-d'),
+                    'end_date' => \Carbon\Carbon::parse($enrollment->end_date)->format('Y-m-d'),
+                    'due_date' => \Carbon\Carbon::parse($enrollment->due_date)->format('Y-m-d'),
                     'total_payment' => $enrollment->total_payment,
                     'debt_status' => $enrollment->debt_status,
                     'student_doi' => $enrollment->person->doi,
@@ -89,6 +89,7 @@ class EnrollmentController extends Controller
         return Inertia::render('enrollments/edit', [
             'enrollment' => [
                 'id' => $enrollment->id,
+                'doi' => $enrollment->person->doi,
                 'study_area' => $enrollment->study_area,
                 'enrollment_date' => $enrollment->enrollment_date,
                 'start_date' => $enrollment->start_date,
@@ -105,6 +106,7 @@ class EnrollmentController extends Controller
     public function update(Request $request, $id)
     {
         $validated = $request->validate([
+            'doi' => 'required|string|size:8',
             'academic_term_id' => 'required|exists:academic_terms,id',
             'study_area' => 'required|string|max:15',
             'enrollment_date' => 'required|date',
@@ -112,12 +114,24 @@ class EnrollmentController extends Controller
             'end_date' => 'required|date',
             'due_date' => 'required|date',
             'total_payment' => 'required|numeric|min:0',
+            'debt_status' => 'required|in:Paid,Pending,Overdue',
         ]);
 
+        $person = Person::where('doi', $validated['doi'])->firstOrFail();
 
 
         $enrollment = Enrollment::findOrFail($id);
-        $enrollment->update($validated);
+        $enrollment->update([
+            'person_id' => $person->id,  // Asignar el ID de la persona
+            'academic_term_id' => $validated['academic_term_id'],
+            'study_area' => $validated['study_area'],
+            'enrollment_date' => $validated['enrollment_date'],
+            'start_date' => $validated['start_date'],
+            'end_date' => $validated['end_date'],
+            'due_date' => $validated['due_date'],
+            'total_payment' => $validated['total_payment'],
+            'debt_status' => $validated['debt_status'],
+        ]);
 
         return redirect()->route('enrollments.index')->with('success', 'Enrollment updated successfully!');
     }

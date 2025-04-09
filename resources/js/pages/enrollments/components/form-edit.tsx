@@ -11,26 +11,37 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 const studyAreas = ['Ingenierias', 'Biomedicas', 'Sociales'] as const;
+const debtStatusTranslation: Record<string, string> = {
+    Paid: 'Pagado',
+    Pending: 'Pendiente',
+    Overdue: 'Vencido',
+};
+
+const EstadoDeuda = ['Paid', 'Pending', 'Overdue'] as const;
 
 const FormSchema = z.object({
-    study_area: z.enum(studyAreas, { errorMap: () => ({ message: 'Seleccione un área de estudio válida.' }) }),
+    doi: z.string().min(8, { message: 'El DNI debe tener 8 caracteres.' }).max(8, { message: 'El DNI debe tener 8 caracteres.' }),
+    academic_term_id: z.string().nonempty({ message: 'Debe seleccionar un ciclo.' }),
+    study_area: z.enum(studyAreas, { errorMap: () => ({ message: 'Debe seleccionar un área de estudios válida.' }) }),
     enrollment_date: z.string().nonempty({ message: 'La fecha de matrícula es obligatoria.' }),
     start_date: z.string().nonempty({ message: 'La fecha de inicio es obligatoria.' }),
     end_date: z.string().nonempty({ message: 'La fecha de fin es obligatoria.' }),
     due_date: z.string().nonempty({ message: 'La fecha de vencimiento es obligatoria.' }),
     total_payment: z.string().nonempty({ message: 'El pago total es obligatorio.' }),
-    academic_term_id: z.string().nonempty({ message: 'El ciclo académico es obligatorio.' }),
+    debt_status: z.enum(EstadoDeuda, { errorMap: () => ({ message: 'Debe seleccionar un estado de deuda válido.' }) }),
 });
 
 interface Props {
     enrollment: {
         id: number;
+        doi: string;
         study_area: string;
         enrollment_date: string;
         start_date: string;
         end_date: string;
         due_date: string;
         total_payment: number;
+        debt_status: string;
         academic_term_id: number;
     };
     academic_terms: { id: number; name: string }[];
@@ -40,6 +51,8 @@ export function EnrollmentEditForm({ enrollment, academic_terms }: Props) {
     const form = useForm<z.infer<typeof FormSchema>>({
         resolver: zodResolver(FormSchema),
         defaultValues: {
+            doi: enrollment.doi, // Accediendo al 'doi' de la persona relacionada
+            academic_term_id: enrollment.academic_term_id.toString(),
             study_area: studyAreas.includes(enrollment.study_area as typeof studyAreas[number])
                 ? (enrollment.study_area as typeof studyAreas[number])
                 : undefined,
@@ -48,7 +61,9 @@ export function EnrollmentEditForm({ enrollment, academic_terms }: Props) {
             end_date: enrollment.end_date,
             due_date: enrollment.due_date,
             total_payment: enrollment.total_payment.toString(),
-            academic_term_id: enrollment.academic_term_id.toString(),
+            debt_status: EstadoDeuda.includes(enrollment.debt_status as typeof EstadoDeuda[number])
+                ? (enrollment.debt_status as typeof EstadoDeuda[number])
+                : undefined,
         },
     });
 
@@ -59,6 +74,22 @@ export function EnrollmentEditForm({ enrollment, academic_terms }: Props) {
     return (
         <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+            <FormField
+                control={form.control}
+                name="doi"
+                render={({ field }) => (
+                    <FormItem>
+                        <FormLabel>DNI</FormLabel>
+                        <FormControl>
+                            <Input maxLength={8} {...field} />
+                        </FormControl>
+                        <FormMessage />
+                        {/* Asegúrate de mostrar un mensaje de error si el DOI no existe */}
+                        {form.formState.errors.doi && <p className="text-red-500">El DNI no es válido o no existe en la base de datos.</p>}
+                    </FormItem>
+                )}
+            />
+                
                 {/* Área de Estudio */}
                 <FormField
                     control={form.control}
@@ -84,6 +115,7 @@ export function EnrollmentEditForm({ enrollment, academic_terms }: Props) {
                         </FormItem>
                     )}
                 />
+
 
                 {/* Fecha de Matrícula */}
                 <FormField
@@ -187,7 +219,30 @@ export function EnrollmentEditForm({ enrollment, academic_terms }: Props) {
                         </FormItem>
                     )}
                 />
-
+                <FormField
+                    control={form.control}
+                    name="debt_status"
+                    render={({ field }) => (
+                        <FormItem>
+                            <FormLabel>Estado de Deuda</FormLabel>
+                            <FormControl>
+                                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                    <SelectTrigger>
+                                        <SelectValue placeholder="Seleccione estado de deuda" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        {EstadoDeuda.map((estado) => (
+                                            <SelectItem key={estado} value={estado}>
+                                                {debtStatusTranslation[estado]}
+                                            </SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
+                            </FormControl>
+                            <FormMessage />
+                        </FormItem>
+                    )}
+                />
                 <Button type="submit">Guardar Cambios</Button>
             </form>
         </Form>

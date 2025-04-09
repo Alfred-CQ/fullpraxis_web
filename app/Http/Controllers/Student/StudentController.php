@@ -113,12 +113,12 @@ class StudentController extends Controller
 
     public function update(Request $request, $id)
     {
-
+        
         $validated = $request->validate([
             'doi' => 'required|string|size:8|unique:people,doi,' . $id . ',id',
             'first_names' => 'required|string|max:100',
             'last_names' => 'required|string|max:100',
-            'phone_number' => 'required|string|size:9',
+            'phone_number' => 'nullable|string|size:9',
             'birth_date' => 'required|date',
             'guardian_phone' => 'required|string|size:9',
             'high_school_name' => 'required|string|max:100',

@@ -30,12 +30,12 @@ class AttendancesController extends Controller
         $asistencia = Attendance::create([
             'person_id' => $responseData['alumno']['id'], 
             'attendance_type' => $request->attendance_type,
-            'recorded_at' => now() // Registrar fecha y hora actual
+            'recorded_at' => Carbon::now('America/Lima'),
         ]);
 
-        $fechaFormateada = \Carbon\Carbon::parse($asistencia->created_at)
-        ->setTimezone('America/Lima') // Cambia la zona horaria a la local
-        ->format('d-m-Y H:i:s'); // Formato de fecha legible
+        $fechaFormateada = Carbon::parse($asistencia->created_at)
+        ->setTimezone('America/Lima')
+        ->format('d-m-Y H:i:s');
 
 
         return response()->json([
@@ -52,7 +52,7 @@ class AttendancesController extends Controller
                     'id' => $asistencia->id,
                     'tipo' => $asistencia->attendance_type,
                     'fecha_registro' => $fechaFormateada,
-                    'hora_registro' => Carbon::now()->format('H:i:s'), // Hora de registro actual
+                    'hora_registro' => Carbon::now('America/Lima')->format('H:i:s'), 
                 ],
                 'matricula' => [
                     'dias_restantes' => $responseData['matricula']['dias_restantes'],

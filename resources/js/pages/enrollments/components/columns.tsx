@@ -35,22 +35,54 @@ export const columns: ColumnDef<Enrollment>[] = [
     {
         accessorKey: 'enrollment_date',
         header: 'Fecha de Matrícula',
-        cell: ({ getValue }) => new Date(getValue() as string).toLocaleDateString(),
+        cell: ({ getValue }) => {
+            const rawDate = getValue() as string;
+            const date = new Date(rawDate + 'T00:00:00');
+            return date.toLocaleDateString('es-PE', {
+              day: '2-digit',
+              month: '2-digit',
+              year: 'numeric',
+            });
+          },
     },
     {
         accessorKey: 'start_date',
         header: 'Fecha de Inicio',
-        cell: ({ getValue }) => new Date(getValue() as string).toLocaleDateString(),
-    },
+        cell: ({ getValue }) => {
+          const rawDate = getValue() as string;
+          const date = new Date(rawDate + 'T00:00:00');
+          return date.toLocaleDateString('es-PE', {
+            day: '2-digit',
+            month: '2-digit',
+            year: 'numeric',
+          });
+        },
+      },
     {
         accessorKey: 'end_date',
         header: 'Fecha de Fin',
-        cell: ({ getValue }) => new Date(getValue() as string).toLocaleDateString(),
+        cell: ({ getValue }) => {
+            const rawDate = getValue() as string;
+            const date = new Date(rawDate + 'T00:00:00');
+            return date.toLocaleDateString('es-PE', {
+              day: '2-digit',
+              month: '2-digit',
+              year: 'numeric',
+            });
+          },
     },
     {
         accessorKey: 'due_date',
         header: 'Fecha de Vencimiento',
-        cell: ({ getValue }) => new Date(getValue() as string).toLocaleDateString(),
+        cell: ({ getValue }) => {
+            const rawDate = getValue() as string;
+            const date = new Date(rawDate + 'T00:00:00');
+            return date.toLocaleDateString('es-PE', {
+              day: '2-digit',
+              month: '2-digit',
+              year: 'numeric',
+            });
+          },
     },
     {
         accessorKey: 'total_payment',
