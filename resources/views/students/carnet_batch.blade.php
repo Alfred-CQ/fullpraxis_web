@@ -3,38 +3,39 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Carnets</title>
+    <title>Carnets de Estudiantes</title>
     <style>
         body {
             margin: 0;
             padding: 0;
-            width: 595px; /* Ancho de A4 en píxeles */
-            height: 842px; /* Alto de A4 en píxeles */
+        }
+
+        .page {
+            page-break-after: always;
+            text-align: center;
         }
 
         .carnet-container {
-            width: {{ $carnetWidth }}px;
-            height: {{ $carnetHeight }}px;
-            position: absolute;
+            width: 600px;
+            position: relative;
+            top: 0;
+            left: 0;
+            margin: 0 auto;
         }
 
         .carnet-image {
             width: 100%;
             height: auto;
         }
-
-        @foreach ($imageDataArray as $index => $imageData)
-            .carnet-{{ $index }} {
-                top: {{ floor($index / $carnetsPerRow) * ($carnetHeight + $verticalMargin) + $verticalMargin }}px;
-                left: {{ ($index % $carnetsPerRow) * ($carnetWidth + $horizontalMargin) + $horizontalMargin }}px;
-            }
-        @endforeach
     </style>
 </head>
 <body>
-    @foreach ($imageDataArray as $index => $imageData)
-        <div class="carnet-container carnet-{{ $index }}">
-            <img class="carnet-image" src="data:image/jpeg;base64,{{ base64_encode($imageData) }}" alt="Carnet">
+    {{ /* HELP */ }}
+    @foreach ($students as $student) 
+        <div class="page">
+            <div class="carnet-container">
+                <img class="carnet-image" src="data:image/jpeg;base64,{{ base64_encode($student['imageData']) }}" alt="Carnet">
+            </div>
         </div>
     @endforeach
 </body>

@@ -17,14 +17,13 @@
         }
 
         .carnet-image {
-            width: 100%;  /* Asegúrate de que la imagen ocupe todo el ancho del contenedor */
-            height: auto; /* Mantén la proporción de la imagen */
+            width: 100%;
+            height: auto;
         }
     </style>
 </head>
 <body>
     <div class="carnet-container">
-        <!-- Coloca la imagen del carnet -->
         <img class="carnet-image" src="data:image/jpeg;base64,{{ base64_encode($imageData) }}" alt="Carnet">
     </div>
 </body>
