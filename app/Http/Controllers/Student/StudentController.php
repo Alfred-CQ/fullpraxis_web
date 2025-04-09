@@ -263,11 +263,9 @@ class StudentController extends Controller
         }
 
         $pdf = Pdf::loadView('students.carnet_batch', ['students' => $data]);
-
-        return $pdf->stream('carnets.pdf', [
-            'Content-Type' => 'application/pdf',
-            'Content-Disposition' => 'inline; filename="carnets.pdf"'
-        ]);
+        $pdf->setPaper('A4', 'landscape');
+        
+        return $pdf->stream('carnets.pdf');
     }
 
     private function generateCarnetImage($student)

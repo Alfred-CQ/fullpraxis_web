@@ -1,42 +1,50 @@
 <!DOCTYPE html>
-<html lang="es">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Carnets de Estudiantes</title>
+    <meta charset="utf-8">
+    <title>Planchas de Carnets</title>
     <style>
+        @page {
+            size: A4 landscape;
+            margin: 20px;
+        }
         body {
             margin: 0;
             padding: 0;
+            font-family: sans-serif;
         }
-
         .page {
+            display: flex;
+            flex-wrap: wrap;
+            width: 100%;
+            height: 100%;
             page-break-after: always;
-            text-align: center;
         }
-
         .carnet-container {
-            width: 600px;
-            position: relative;
-            top: 0;
-            left: 0;
-            margin: 0 auto;
+            width: 50%; /* 2 columnas */
+            padding: 10px;
+            box-sizing: border-box;
         }
-
         .carnet-image {
             width: 100%;
             height: auto;
+            max-height: 150px;
+            object-fit: contain;
+            border: 1px solid #ccc;
         }
     </style>
 </head>
 <body>
-    {{ /* HELP */ }}
-    @foreach ($students as $student) 
-        <div class="page">
+
+@foreach(collect($students)->chunk(6) as $group)
+    <div class="page">
+        @foreach($group as $student)
             <div class="carnet-container">
-                <img class="carnet-image" src="data:image/jpeg;base64,{{ base64_encode($student['imageData']) }}" alt="Carnet">
+                <img class="carnet-image" src="data:image/png;base64,{{ base64_encode($student['imageData']) }}" alt="Carnet">
             </div>
-        </div>
-    @endforeach
+        @endforeach
+    </div>
+@endforeach
+
 </body>
 </html>

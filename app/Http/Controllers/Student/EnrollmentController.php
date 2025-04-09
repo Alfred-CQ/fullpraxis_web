@@ -63,8 +63,8 @@ class EnrollmentController extends Controller
             'debt_status' => 'required|in:Paid,Pending,Overdue',
         ]);
 
+        
         $person = Person::where('doi', $validated['doi'])->firstOrFail();
-
         Enrollment::create([
             'person_id' => $person->id,
             'academic_term_id' => $validated['academic_term_id'],
@@ -76,6 +76,7 @@ class EnrollmentController extends Controller
             'total_payment' => $validated['total_payment'],
             'debt_status' => $validated['debt_status'],
         ]);
+        
 
         return redirect()->route('enrollments.index')->with('success', 'Enrollment created successfully!');
     }

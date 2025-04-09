@@ -26,7 +26,7 @@ export default function StudentView({ students }: Props) {
             <Head title="Alumnos" />
             <div className="flex h-full flex-1 flex-col gap-4 rounded-xl p-4">
                 <div className="flex justify-end">
-                    <Button variant="outline" size="sm" onClick={() => router.get(route('students.carnets'))}>
+                    <Button variant="outline" size="sm" onClick={() => window.open(route('students.carnets'), '_blank')}>
                         <Download />
                         <span className="hidden lg:inline">Descargar Carnets</span>
                     </Button>

@@ -12,7 +12,14 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 
 // Enum definitions
 const AreaDeEstudios = ['Ingenierias', 'Biomedicas', 'Sociales'] as const;
-const EstadoDeuda = ['Pagado', 'Pendiente', 'Vencido'] as const;
+
+const debtStatusTranslation: Record<string, string> = {
+    Paid: 'Pagado',
+    Pending: 'Pendiente',
+    Overdue: 'Vencido',
+};
+
+const EstadoDeuda = ['Paid', 'Pending', 'Overdue'] as const;
 
 // Validation schema with Zod
 const FormSchema = z.object({
@@ -198,7 +205,7 @@ export function EnrollmentForm({ seasons }: { seasons: { id: number; name: strin
                                     <SelectContent>
                                         {EstadoDeuda.map((estado) => (
                                             <SelectItem key={estado} value={estado}>
-                                                {estado}
+                                                {debtStatusTranslation[estado]} {/* Mostrar la traducción */}
                                             </SelectItem>
                                         ))}
                                     </SelectContent>
