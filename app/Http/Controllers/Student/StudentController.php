@@ -59,7 +59,7 @@ class StudentController extends Controller
     {
         try {
             $validated = $request->validated();
-        
+
             $person = Person::firstOrCreate(
                 ['doi' => $validated['doi']],
                 [
@@ -73,7 +73,7 @@ class StudentController extends Controller
             if ($request->hasFile('photo')) {
                 $photoPath = $request->file('photo')->store('students/photos', 'public');
             }
-            
+
             Student::create([
                 'person_id' => $person->id,
                 'birth_date' => $validated['birth_date'],
@@ -123,9 +123,9 @@ class StudentController extends Controller
 
         $person->update([
             'doi' => $validated['doi'],
-            'first_names' => $validated['first_names'], 
-            'last_names' => $validated['last_names'], 
-            'phone_number' => $validated['phone_number'], 
+                'first_names' => $validated['first_names'],
+                'last_names' => $validated['last_names'],
+                'phone_number' => $validated['phone_number'],
         ]);
 
         if ($request->hasFile('photo')) {
@@ -398,6 +398,17 @@ class StudentController extends Controller
         ]);
     }
 
+    public function calendar($id): Response
+    {
+        $student = Student::with('person')->where('id', $id)->firstOrFail();
 
+        return Inertia::render('students/CalendarPage', [
+            'student' => [
+                'student_id' => $student->id,
+                'first_names' => $student->person->first_names,
+                'last_names' => $student->person->last_names,
+            ],
+        ]);
+    }
 
 }
