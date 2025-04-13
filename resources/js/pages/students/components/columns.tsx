@@ -5,7 +5,7 @@ import { ColumnDef } from '@tanstack/react-table';
 
 import { router } from '@inertiajs/react';
 
-import { FileText, History, IdCard, UserPen } from 'lucide-react';
+import { CalendarClock, History, IdCard, UserPen } from 'lucide-react';
 
 export type Student = {
     student_id: string;
@@ -83,6 +83,10 @@ export const columns: ColumnDef<Student>[] = [
 
                     <Button variant="outline" size="icon" onClick={handleGenerateCarnet}>
                         <IdCard />
+                    </Button>
+
+                    <Button variant="outline" size="icon" onClick={() => window.open(route('students.calendar', student.student_id), '_blank')}>
+                        <CalendarClock />
                     </Button>
 
                     <Button
