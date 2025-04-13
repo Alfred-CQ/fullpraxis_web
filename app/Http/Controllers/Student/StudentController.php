@@ -113,9 +113,11 @@ class StudentController extends Controller
 
     public function update(Request $request, $id)
     {
+        $student = Student::with('person')->where('id', $id)->firstOrFail();
+        $person = $student->person;
         
         $validated = $request->validate([
-            'doi' => 'required|string|size:8|unique:people,doi,' . $id . ',id',
+            'doi' => 'required|string|size:8|unique:people,doi,' . $person->id,
             'first_names' => 'required|string|max:100',
             'last_names' => 'required|string|max:100',
             'phone_number' => 'nullable|string|size:9',
