@@ -1,7 +1,11 @@
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
-import { Head } from '@inertiajs/react';
+import { Head, usePage} from '@inertiajs/react';
 import { EnrollmentEditForm } from './components/form-edit';
+
+import { toast } from 'sonner';
+import { useEffect } from 'react';
+
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -17,6 +21,7 @@ const breadcrumbs: BreadcrumbItem[] = [
 interface Props {
     enrollment: {
         id: number;
+        doi: string;
         study_area: string;
         enrollment_date: string;
         start_date: string;
@@ -27,9 +32,35 @@ interface Props {
         academic_term_id: number;
     };
     academic_terms: { id: number; name: string }[];
+    flash?: {
+        success?: string;
+        error?: string;
+        description?: string;
+    };
+    errors?: Record<string, string>;
 }
 
-export default function EditEnrollment({ enrollment, academic_terms }: Props) {
+export default function EditEnrollment({ enrollment, academic_terms, flash }: Props) {
+    const { errors } = usePage().props;
+    useEffect(() => {
+        if (errors) {
+            Object.entries(errors).forEach(([field, message]) => {
+                toast.error(`Error en ${field}: ${message}`);
+            });
+        }
+        if (flash?.success) {
+            toast.success(flash.success, {
+                description: flash.description,
+            });
+        }
+        if (flash?.error) {
+            toast.error(flash.error, {
+                description: flash.description,
+            });
+        }
+        console.log(flash);
+    }, [flash, errors]);
+
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Editar Matrícula" />

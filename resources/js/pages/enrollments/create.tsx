@@ -1,7 +1,10 @@
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
-import { Head } from '@inertiajs/react';
+import { Head, usePage } from '@inertiajs/react';
 import { EnrollmentForm } from './components/form';
+
+import { useEffect } from 'react';
+import { toast } from 'sonner';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -16,11 +19,34 @@ const breadcrumbs: BreadcrumbItem[] = [
 
 interface Props {
     academic_terms: { id: number; name: string }[];
+    flash?: {
+        success?: string;
+        error?: string;
+        description?: string;
+    };
+    errors?: Record<string, string>;
 }
 
-
-
-export default function Dashboard({ academic_terms }: Props) {
+export default function Dashboard({ academic_terms, flash}: Props) {
+    const { errors } = usePage().props;
+    useEffect(() => {
+        if (errors) {
+            Object.entries(errors).forEach(([field, message]) => {
+                toast.error(`Error en ${field}: ${message}`);
+            });
+        }
+        if (flash?.success) {
+            toast.success(flash.success, {
+                description: flash.description,
+            });
+        }
+        if (flash?.error) {
+            toast.error(flash.error, {
+                description: flash.description,
+            });
+        }
+        console.log(flash);
+    }, [flash, errors]);
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Registro" />

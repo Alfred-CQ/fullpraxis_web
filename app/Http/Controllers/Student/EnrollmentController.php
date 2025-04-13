@@ -13,6 +13,9 @@ use App\Models\AcademicTerm;
 use Inertia\Inertia;
 use Inertia\Response;
 
+use App\Http\Requests\StoreEnrollmentRequest;
+use App\Http\Requests\UpdateEnrollmentRequest;
+
 class EnrollmentController extends Controller
 {
     public function index(): Response
@@ -49,36 +52,35 @@ class EnrollmentController extends Controller
         ]);
     }
 
-    public function store(Request $request)
+    public function store(StoreEnrollmentRequest $request)
     {
-        $validated = $request->validate([
-            'doi' => 'required|string|size:8',
-            'academic_term_id' => 'required|exists:academic_terms,id',
-            'study_area' => 'required|string|max:15',
-            'enrollment_date' => 'required|date',
-            'start_date' => 'required|date',
-            'end_date' => 'required|date',
-            'due_date' => 'required|date',
-            'total_payment' => 'required|numeric|min:0',
-            'debt_status' => 'required|in:Paid,Pending,Overdue',
-        ]);
+        try {
+            $validated = $request->validated();
 
-        
-        $person = Person::where('doi', $validated['doi'])->firstOrFail();
-        Enrollment::create([
-            'person_id' => $person->id,
-            'academic_term_id' => $validated['academic_term_id'],
-            'study_area' => $validated['study_area'],
-            'enrollment_date' => $validated['enrollment_date'],
-            'start_date' => $validated['start_date'],
-            'end_date' => $validated['end_date'],
-            'due_date' => $validated['due_date'],
-            'total_payment' => $validated['total_payment'],
-            'debt_status' => $validated['debt_status'],
-        ]);
-        
+            $person = Person::where('doi', $validated['doi'])->first();
+            Enrollment::create([
+                'person_id' => $person->id,
+                'academic_term_id' => $validated['academic_term_id'],
+                'study_area' => $validated['study_area'],
+                'enrollment_date' => $validated['enrollment_date'],
+                'start_date' => $validated['start_date'],
+                'end_date' => $validated['end_date'],
+                'due_date' => $validated['due_date'],
+                'total_payment' => $validated['total_payment'],
+                'debt_status' => $validated['debt_status'],
+            ]);
+            
 
-        return redirect()->route('enrollments.index')->with('success', 'Enrollment created successfully!');
+            return redirect()->route('enrollments.index')->with('flash', [
+                'success' => 'Matrícula registrada correctamente.',
+                'description' => 'La matrícula ha sido registrada exitosamente.',
+            ]);
+        } catch (\Exception $e) {
+            return redirect()->back()->with('flash', [
+                'error' => 'Error al matrícular estudiante.',
+                'description' => $e->getMessage(),
+            ]);
+        }
     }
 
     public function edit($id): Response
@@ -103,36 +105,35 @@ class EnrollmentController extends Controller
         ]);
     }
 
-    public function update(Request $request, $id)
+    public function update(UpdateEnrollmentRequest $request, $id)
     {
-        $validated = $request->validate([
-            'doi' => 'required|string|size:8',
-            'academic_term_id' => 'required|exists:academic_terms,id',
-            'study_area' => 'required|string|max:15',
-            'enrollment_date' => 'required|date',
-            'start_date' => 'required|date',
-            'end_date' => 'required|date',
-            'due_date' => 'required|date',
-            'total_payment' => 'required|numeric|min:0',
-            'debt_status' => 'required|in:Paid,Pending,Overdue',
-        ]);
+        try {
+            $validated = $request->validated();
 
-        $person = Person::where('doi', $validated['doi'])->firstOrFail();
-
-
-        $enrollment = Enrollment::findOrFail($id);
-        $enrollment->update([
-            'person_id' => $person->id,  // Asignar el ID de la persona
-            'academic_term_id' => $validated['academic_term_id'],
-            'study_area' => $validated['study_area'],
-            'enrollment_date' => $validated['enrollment_date'],
-            'start_date' => $validated['start_date'],
-            'end_date' => $validated['end_date'],
-            'due_date' => $validated['due_date'],
-            'total_payment' => $validated['total_payment'],
-            'debt_status' => $validated['debt_status'],
-        ]);
-
-        return redirect()->route('enrollments.index')->with('success', 'Enrollment updated successfully!');
+            $person = Person::where('doi', $validated['doi'])->first();
+    
+            $enrollment = Enrollment::findOrFail($id);
+            $enrollment->update([
+                'person_id' => $person->id,
+                'academic_term_id' => $validated['academic_term_id'],
+                'study_area' => $validated['study_area'],
+                'enrollment_date' => $validated['enrollment_date'],
+                'start_date' => $validated['start_date'],
+                'end_date' => $validated['end_date'],
+                'due_date' => $validated['due_date'],
+                'total_payment' => $validated['total_payment'],
+                'debt_status' => $validated['debt_status'],
+            ]);
+    
+            return redirect()->route('enrollments.index')->with('flash', [
+                'success' => 'Matrícula actualizada correctamente.',
+                'description' => 'La matrícula ha sido actualizada exitosamente.',
+            ]);
+        } catch (\Exception $e) {
+            return redirect()->back()->with('flash', [
+                'error' => 'Error al actualizar matrícula.',
+                'description' => $e->getMessage(),
+            ]);
+        }
     }
 }

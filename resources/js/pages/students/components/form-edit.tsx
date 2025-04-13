@@ -31,12 +31,12 @@ interface InitialData {
     birth_date: string;
     guardian_phone: string;
     high_school_name: string | null ;
-    photo_url?: string | null;
+    photo_path?: string | null;
 }
 
 export function EditForm({ initialData }: { initialData: InitialData }) {
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
-    const [previewUrl, setPreviewUrl] = useState<string | null>(initialData?.photo_url || null);
+    const [previewUrl, setPreviewUrl] = useState<string | null>(initialData?.photo_path || null);
     const [isSubmitting, setIsSubmitting] = useState(false);
 
     const form = useForm<z.infer<typeof EditFormSchema>>({
