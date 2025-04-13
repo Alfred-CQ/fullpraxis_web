@@ -58,8 +58,8 @@ class StudentController extends Controller
     public function store(StoreStudentRequest $request)
     {
         try {
-            $validated = $request->validate();
-
+            $validated = $request->validated();
+        
             $person = Person::firstOrCreate(
                 ['doi' => $validated['doi']],
                 [
@@ -73,9 +73,7 @@ class StudentController extends Controller
             if ($request->hasFile('photo')) {
                 $photoPath = $request->file('photo')->store('students/photos', 'public');
             }
-
-            //    dd($person->id);
-
+            
             Student::create([
                 'person_id' => $person->id,
                 'birth_date' => $validated['birth_date'],
@@ -85,12 +83,12 @@ class StudentController extends Controller
             ]);
 
             return redirect()->route('students.index')->with('flash', [
-                'success' => 'Student enrolled successfully!',
-                'description' => 'The student has been added to the database.',
+                'success' => 'Estudiante registrado correctamente.',
+                'description' => 'El estudiante ha sido registrado exitosamente.',
             ]);
         } catch (\Exception $e) {
             return redirect()->back()->with('flash', [
-                'error' => 'An error occurred!',
+                'error' => 'Error al registrar el estudiante.',
                 'description' => $e->getMessage(),
             ]);
         }
@@ -117,7 +115,8 @@ class StudentController extends Controller
 
     public function update(UpdateStudentRequest $request, $id)
     {
-        $validated = $request->validate();
+        try {
+        $validated = $request->validated();
 
         $student = Student::where('id', $id)->firstOrFail();
         $person = $student->person;
@@ -140,7 +139,16 @@ class StudentController extends Controller
             'high_school_name' => $validated['high_school_name'],
         ]);
 
-        return redirect()->route('students.index')->with('success', 'Estudiante actualizado correctamente.');
+        return redirect()->route('students.index')->with('flash', [
+            'success' => 'Estudiante actualizado correctamente.',
+            'description' => 'El estudiante ha sido actualizado exitosamente.',
+        ]);
+        } catch (\Exception $e) {
+            return redirect()->back()->with('flash', [
+                'error' => 'Error al actualizar el estudiante.',
+                'description' => $e->getMessage(),
+            ]);
+        }
     }
 
     public function destroy($id)

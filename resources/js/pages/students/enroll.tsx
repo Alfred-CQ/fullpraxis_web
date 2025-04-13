@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 
-import { Head } from '@inertiajs/react';
+import { Head, usePage } from '@inertiajs/react';
 
 import AppLayout from '@/layouts/app-layout';
 
@@ -27,10 +27,17 @@ interface Props {
         error?: string;
         description?: string;
     };
+    errors?: Record<string, string>;
 }
 
 export default function StudentRegister({ flash }: Props) {
+    const { errors } = usePage().props;
     useEffect(() => {
+        if (errors) {
+            Object.entries(errors).forEach(([field, message]) => {
+                toast.error(`Error en ${field}: ${message}`);
+            });
+        }
         if (flash?.success) {
             toast.success(flash.success, {
                 description: flash.description,
@@ -42,7 +49,7 @@ export default function StudentRegister({ flash }: Props) {
             });
         }
         console.log(flash);
-    }, [flash]);
+    }, [flash, errors]);
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Registro" />

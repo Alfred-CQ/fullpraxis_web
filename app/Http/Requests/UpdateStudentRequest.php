@@ -25,11 +25,11 @@ class UpdateStudentRequest extends FormRequest
         $personId = $this->getPersonId();
 
         return [
-            'doi' => 'required|string|size:8|unique:people,doi, '. $personId,
+            'doi' => 'required|string|size:8|unique:people,doi, ' . $personId,
             'first_names' => 'required|string|max:50',
             'last_names' => 'required|string|max:50',
             'phone_number' => 'nullable|string|size:9',
-            'birth_date' => 'required|date',
+            'birth_date' => 'required|date|before:3 years ago',
             'guardian_phone' => 'required|string|size:9',
             'high_school_name' => 'nullable|string|max:100',
             'photo_path' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:5120', // 5MB
@@ -61,7 +61,8 @@ class UpdateStudentRequest extends FormRequest
             'phone_number.size' => 'El número de celular debe tener exactamente 9 dígitos.',
         
             'birth_date.required' => 'La fecha de nacimiento es obligatoria.',
-        
+            'birth_date.before' => 'La fecha de nacimiento debe ser antes de 3 años atrás.',
+
             'guardian_phone.required' => 'El número del apoderado es obligatorio.',
             'guardian_phone.size' => 'El número del apoderado debe tener exactamente 9 dígitos.',
         

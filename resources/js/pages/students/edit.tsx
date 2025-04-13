@@ -2,6 +2,8 @@ import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 import { Head, usePage } from '@inertiajs/react';
 import { EditForm } from './components/form-edit';
+import { toast } from 'sonner';
+import { useEffect } from 'react';
 
 
 type StudentData = {
@@ -33,10 +35,37 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
 ];
 
-export default function StudentEdit() {
+interface Props {
+    flash?: {
+        success?: string;
+        error?: string;
+        description?: string;
+    };
+    errors?: Record<string, string>;
+}
+
+export default function StudentEdit({ flash }: Props) {
 
     const { student } = (usePage() as unknown as PageProps).props;
-
+        const { errors } = usePage().props;
+        useEffect(() => {
+            if (errors) {
+                Object.entries(errors).forEach(([field, message]) => {
+                    toast.error(`Error en ${field}: ${message}`);
+                });
+            }
+            if (flash?.success) {
+                toast.success(flash.success, {
+                    description: flash.description,
+                });
+            }
+            if (flash?.error) {
+                toast.error(flash.error, {
+                    description: flash.description,
+                });
+            }
+            console.log(flash);
+        }, [flash, errors]);
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Editar Alumno" />
