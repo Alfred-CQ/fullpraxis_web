@@ -21,6 +21,9 @@ use Intervention\Image\Drivers\Gd\Driver;
 use Endroid\QrCode\QrCode;
 use Endroid\QrCode\Writer\PngWriter;
 
+use App\Http\Requests\StoreStudentRequest;
+use App\Http\Requests\UpdateStudentRequest;
+
 class StudentController extends Controller
 {
     //
@@ -51,19 +54,9 @@ class StudentController extends Controller
         return Inertia::render('students/enroll');
     }
 
-    public function store(Request $request)
+    public function store(StoreStudentRequest $request)
     {
-        $validated = $request->validate([
-            'doi' => 'required|string|size:8|unique:people,doi',
-            'first_names' => 'required|string|max:100',
-            'last_names' => 'required|string|max:100',
-            'phone_number' => 'required|string|size:9',
-            'birth_date' => 'required|date',
-            'guardian_phone' => 'required|string|size:9',
-            'high_school_name' => 'required|string|max:100',
-            'photo_path' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048'
-        ]);
-
+        $validated = $request->validated();
 
         $person = Person::firstOrCreate(
             ['doi' => $validated['doi']],
@@ -79,8 +72,6 @@ class StudentController extends Controller
             $photoPath = $request->file('photo')->store('students/photos', 'public');
         }
 
-        //    dd($person->id);
-
         Student::create([
             'person_id' => $person->id,
             'birth_date' => $validated['birth_date'],
@@ -89,7 +80,7 @@ class StudentController extends Controller
             'photo_path' => $photoPath,
         ]);
 
-        return redirect()->route('students.index')->with('success', 'Student enrolled successfully!');
+        return redirect()->route('students.index')->with('success', 'Estudiante registrado correctamente.');
     }
 
     public function edit($id)
@@ -111,30 +102,18 @@ class StudentController extends Controller
         ]);
     }
 
-    public function update(Request $request, $id)
+    public function update(UpdateStudentRequest $request, $id)
     {
-        $student = Student::with('person')->where('id', $id)->firstOrFail();
-        $person = $student->person;
-        
-        $validated = $request->validate([
-            'doi' => 'required|string|size:8|unique:people,doi,' . $person->id,
-            'first_names' => 'required|string|max:100',
-            'last_names' => 'required|string|max:100',
-            'phone_number' => 'nullable|string|size:9',
-            'birth_date' => 'required|date',
-            'guardian_phone' => 'required|string|size:9',
-            'high_school_name' => 'required|string|max:100',
-            'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-        ]);
+        $validated = $request->validated();
 
         $student = Student::where('id', $id)->firstOrFail();
         $person = $student->person;
 
         $person->update([
             'doi' => $validated['doi'],
-            'first_names' => $validated['first_names'],  // Corregido
-            'last_names' => $validated['last_names'],    // Corregido
-            'phone_number' => $validated['phone_number'], // Corregido
+            'first_names' => $validated['first_names'], 
+            'last_names' => $validated['last_names'], 
+            'phone_number' => $validated['phone_number'], 
         ]);
 
         if ($request->hasFile('photo')) {
@@ -174,85 +153,6 @@ class StudentController extends Controller
             return redirect()->back()->withErrors(['error' => 'Ocurrió un error al intentar eliminar el estudiante y la persona asociada.']);
         }
     }
-    /*
-    public function generateCarnetBatchPdf()
-    {
-        $students = Student::with('person')->get();
-        $imageDataArray = []; // Aquí almacenaremos todas las imágenes en base64
-
-        foreach ($students as $student) {
-            $manager = new ImageManager((new Driver()));
-            $image = $manager->read(public_path('carnet_fullpraxis.png'));
-
-            $latestEnrollment = $student->person->enrollment()->latest('enrollment_date')->first();
-
-            // Extraer datos
-            $first_names = $student->person->first_names;
-            $last_names = $student->person->last_names;
-            $doi = $student->person->doi;
-            $photo_path = $student->photo_path ? storage_path('app/public/' . $student->photo_path) : null;
-            $start_date = Carbon::parse($latestEnrollment->start_date)->format('d    m     y');
-
-            // Agregar texto (igual que en tu función individual)
-            $image->text($last_names, 280, 164, function ($font) {
-                $font->filename(public_path('fonts/Open_Sans/static/OpenSans-Bold.ttf'));
-                $font->size(32);
-                $font->color('#000000');
-                $font->align('left');
-                $font->valign('top');
-            });
-
-            $image->text($first_names, 280, 260, function ($font) {
-                $font->filename(public_path('fonts/Open_Sans/static/OpenSans-Bold.ttf'));
-                $font->size(32);
-                $font->color('#000000');
-                $font->align('left');
-                $font->valign('top');
-            });
-
-            $image->text($doi, 490, 415, function ($font) {
-                $font->filename(public_path('fonts/Open_Sans/static/OpenSans-Bold.ttf'));
-                $font->size(32);
-                $font->color('#000000');
-                $font->align('left');
-                $font->valign('top');
-            });
-
-            $image->text($start_date, 818, 410, function ($font) {
-                $font->filename(public_path('fonts/Open_Sans/static/OpenSans-Bold.ttf'));
-                $font->size(32);
-                $font->color('#000000');
-                $font->align('left');
-                $font->valign('top');
-            });
-
-            // Procesar foto y QR (igual que en tu función individual)
-            if(file_exists($photo_path)) {
-                $photo = $manager->read($photo_path);
-                $photo->resize(180, 220);
-                $image->place($photo, 'top-left', 60, 130);
-            }
-
-            $qrCode = QrCode::create($doi)
-                ->setSize(220)
-                ->setMargin(0);
-            $writer = new PngWriter();
-            $result = $writer->write($qrCode);
-            $qrCodePng = $result->getString();
-            $qrImage = $manager->read($qrCodePng);
-            $image->place($qrImage, 'top-left', 1310, 202);
-
-            // Convertir a base64 directamente sin archivos temporales
-            $imageDataArray[] = $image->encode()->__toString();
-        }
-
-        // Generar el PDF con todas las imágenes
-        $pdf = Pdf::loadView('students.carnet_batch', ['imageDataArray' => $imageDataArray]);
-        $pdf->setPaper('A4', 'landscape');
-
-        return $pdf->stream('carnets.pdf');
-    }
-    */
 
     public function generateAllCarnetsPdf()
     {

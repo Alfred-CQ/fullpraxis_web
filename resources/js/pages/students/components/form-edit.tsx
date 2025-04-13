@@ -16,10 +16,10 @@ const EditFormSchema = z.object({
     doi: z.string().min(8, { message: 'El DNI debe tener 8 caracteres.' }).max(8),
     first_names: z.string().min(2, { message: 'El nombre es obligatorio.' }),
     last_names: z.string().min(2, { message: 'El apellido es obligatorio.' }),
-    phone_number: z.string().min(9, { message: 'El teléfono debe tener 9 dígitos.' }).max(9).optional().or(z.literal('')),
+    phone_number: z.string().optional().refine((val) => !val || /^\d{9}$/.test(val), {message: 'Debe tener exactamente 9 dígitos.',}),
     birth_date: z.string().nonempty({ message: 'La fecha de nacimiento es obligatoria.' }),
     guardian_phone: z.string().min(9, { message: 'El teléfono del apoderado debe tener 9 dígitos.' }).max(9),
-    high_school_name: z.string().min(2, { message: 'El colegio de egreso es obligatorio.' }),
+    high_school_name: z.string().max(100).or(z.literal('')).optional(),
 });
 
 interface InitialData {
@@ -30,7 +30,7 @@ interface InitialData {
     phone_number: string | null;
     birth_date: string;
     guardian_phone: string;
-    high_school_name: string;
+    high_school_name: string | null ;
     photo_url?: string | null;
 }
 
@@ -42,7 +42,7 @@ export function EditForm({ initialData }: { initialData: InitialData }) {
     const form = useForm<z.infer<typeof EditFormSchema>>({
         resolver: zodResolver(EditFormSchema),
         defaultValues: initialData
-            ? { ...initialData, phone_number: initialData.phone_number ?? undefined }
+            ? { ...initialData, phone_number: initialData.phone_number ?? undefined, high_school_name: initialData.high_school_name ?? undefined }
             : {
             doi: '',
             first_names: '',
@@ -61,10 +61,10 @@ export function EditForm({ initialData }: { initialData: InitialData }) {
         formData.append('doi', data.doi);
         formData.append('first_names', data.first_names);
         formData.append('last_names', data.last_names);
-        formData.append('phone_number', data.phone_number ?? '');
+        formData.append('phone_number', data.phone_number || '');
         formData.append('birth_date', data.birth_date);
         formData.append('guardian_phone', data.guardian_phone);
-        formData.append('high_school_name', data.high_school_name);
+        formData.append('high_school_name', data.high_school_name || '' );
 
         if (selectedFile) {
             formData.append('photo', selectedFile);
