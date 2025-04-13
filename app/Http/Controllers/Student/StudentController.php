@@ -16,7 +16,7 @@ use Inertia\Response;
 use Illuminate\Support\Carbon;
 
 use Barryvdh\DomPDF\Facade\Pdf;
-use Intervention\Image\ImageManager;    
+use Intervention\Image\ImageManager;
 use Intervention\Image\Drivers\Gd\Driver;
 use Endroid\QrCode\QrCode;
 use Endroid\QrCode\Writer\PngWriter;
@@ -43,53 +43,67 @@ class StudentController extends Controller
 
         return Inertia::render('students/index', [
             'students' => $students,
+            'flash' => session('flash'),
         ]);
     }
 
     public function create(): Response
     {
-        return Inertia::render('students/enroll');
+        return Inertia::render('students/enroll', ['flash' => session('flash')]);
     }
 
     public function store(Request $request)
     {
-        $validated = $request->validate([
-            'doi' => 'required|string|size:8|unique:people,doi',
-            'first_names' => 'required|string|max:100',
-            'last_names' => 'required|string|max:100',
-            'phone_number' => 'required|string|size:9',
-            'birth_date' => 'required|date',
-            'guardian_phone' => 'required|string|size:9',
-            'high_school_name' => 'required|string|max:100',
-            'photo_path' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048'
-        ]);
+        try {
+            $validated = $request->validate([
+                'doi' => 'required|string|size:8|unique:people,doi',
+                'first_names' => 'required|string|max:100',
+                'last_names' => 'required|string|max:100',
+                'phone_number' => 'required|string|size:9',
+                'birth_date' => 'required|date',
+                'guardian_phone' => 'required|string|size:9',
+                'high_school_name' => 'required|string|max:100',
+                'photo_path' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048'
+            ], [
+                'doi.unique' => 'El DOI ya está registrado en el sistema.',
+                'doi.required' => 'El campo DOI es obligatorio.'
+            ]);
 
 
-        $person = Person::firstOrCreate(
-            ['doi' => $validated['doi']],
-            [
-                'first_names' => $validated['first_names'],
-                'last_names' => $validated['last_names'],
-                'phone_number' => $validated['phone_number'],
-            ]
-        );
+            $person = Person::firstOrCreate(
+                ['doi' => $validated['doi']],
+                [
+                    'first_names' => $validated['first_names'],
+                    'last_names' => $validated['last_names'],
+                    'phone_number' => $validated['phone_number'],
+                ]
+            );
 
-        $photoPath = null;
-        if ($request->hasFile('photo')) {
-            $photoPath = $request->file('photo')->store('students/photos', 'public');
+            $photoPath = null;
+            if ($request->hasFile('photo')) {
+                $photoPath = $request->file('photo')->store('students/photos', 'public');
+            }
+
+            //    dd($person->id);
+
+            Student::create([
+                'person_id' => $person->id,
+                'birth_date' => $validated['birth_date'],
+                'guardian_phone' => $validated['guardian_phone'],
+                'high_school_name' => $validated['high_school_name'],
+                'photo_path' => $photoPath,
+            ]);
+
+            return redirect()->route('students.index')->with('flash', [
+                'success' => 'Student enrolled successfully!',
+                'description' => 'The student has been added to the database.',
+            ]);
+        } catch (\Exception $e) {
+            return redirect()->back()->with('flash', [
+                'error' => 'An error occurred!',
+                'description' => $e->getMessage(),
+            ]);
         }
-
-        //    dd($person->id);
-
-        Student::create([
-            'person_id' => $person->id,
-            'birth_date' => $validated['birth_date'],
-            'guardian_phone' => $validated['guardian_phone'],
-            'high_school_name' => $validated['high_school_name'],
-            'photo_path' => $photoPath,
-        ]);
-
-        return redirect()->route('students.index')->with('success', 'Student enrolled successfully!');
     }
 
     public function edit($id)
@@ -115,7 +129,7 @@ class StudentController extends Controller
     {
         $student = Student::with('person')->where('id', $id)->firstOrFail();
         $person = $student->person;
-        
+
         $validated = $request->validate([
             'doi' => 'required|string|size:8|unique:people,doi,' . $person->id,
             'first_names' => 'required|string|max:100',
@@ -261,12 +275,12 @@ class StudentController extends Controller
         $data = [];
         foreach ($students as $student) {
             $image = $this->generateCarnetImage($student);
-            $data[] = ['imageData' => $image]; 
+            $data[] = ['imageData' => $image];
         }
 
         $pdf = Pdf::loadView('students.carnet_batch', ['students' => $data]);
         $pdf->setPaper('A4', 'landscape');
-        
+
         return $pdf->stream('carnets.pdf');
     }
 
@@ -274,7 +288,7 @@ class StudentController extends Controller
     {
         $manager = new ImageManager((new Driver()));
         $image = $manager->read(public_path('carnet_fullpraxis.png'));
-        
+
         $latestEnrollment = $student->person->enrollment()->latest('enrollment_date')->first();
 
         $first_names = $student->person->first_names;
@@ -282,7 +296,7 @@ class StudentController extends Controller
         $doi = $student->person->doi;
         $photo_path = $student->photo_path ? storage_path('app/public/' . $student->photo_path) : null;
         $start_date = Carbon::parse($latestEnrollment->start_date)->format('d    m     y');
-        
+
 
         $image->text($last_names, 280, 164, function ($font) {
             $font->filename(public_path('fonts/Open_Sans/static/OpenSans-Bold.ttf'));
@@ -342,7 +356,7 @@ class StudentController extends Controller
         $manager = new ImageManager((new Driver()));
 
         $image = $manager->read(public_path('carnet_fullpraxis.png'));
-     
+
         $student = Student::with('person')->where('id', $id)->firstOrFail();
         $latestEnrollment = $student->person->enrollment()->latest('enrollment_date')->first();
 
@@ -352,7 +366,7 @@ class StudentController extends Controller
         $doi = $student->person->doi;
         $photo_path = $student->photo_path ? storage_path('app/public/' . $student->photo_path) : null;
         $start_date = Carbon::parse($latestEnrollment->start_date)->format('d    m     y');
-        
+
 
         $image->text($last_names, 280, 164, function ($font) {
             $font->filename(public_path('fonts/Open_Sans/static/OpenSans-Bold.ttf'));
@@ -404,12 +418,12 @@ class StudentController extends Controller
         $image->place($qrImage, 'top-left', 1310, 202);
 
         $imageData = $image->encode()->__toString();
-        
+
         $pdf = Pdf::loadView('students.carnet', ['imageData' => $imageData]);
         $pdf->setPaper('A4', 'landscape');
 
         return $pdf->stream('carnet.pdf');
-        
+
         //return response($image->toJpeg())->header('Content-Type', 'image/jpeg');
     }
 
@@ -444,23 +458,23 @@ class StudentController extends Controller
         $request->validate([
             'doi' => 'required|string|max:8',
         ]);
-        
+
         $doi = $request->input('doi');
-        
+
         $persona = Person::with(['student', 'enrollment' => function($query) {
             $query->latest('enrollment_date');
         }])->where('doi', $doi)->first();
-    
+
         if (!$persona) {
             return response()->json([
                 'success' => false,
                 'message' => 'Alumno no encontrado',
             ], 404);
         }
-    
+
         $matricula = $persona->enrollment->first();
         $diasRestantes = $matricula ? Carbon::now()->diffInDays($matricula->fecha_vencimiento, false) : null;
-    
+
         return response()->json([
             'success' => true,
             'alumno' => [
@@ -468,10 +482,10 @@ class StudentController extends Controller
                 'first_names' => $persona->first_names,
                 'last_names' => $persona->last_names,
                 'doi' => $persona->doi,
-                'guardian_phone' => $persona->student->guardian_phone ?? 'No disponible', 
+                'guardian_phone' => $persona->student->guardian_phone ?? 'No disponible',
             ],
             'matricula' => [
-                'dias_restantes' => $diasRestantes, 
+                'dias_restantes' => $diasRestantes,
                 'status_deuda' => $matricula ? $matricula->debt_status : 'Sin matrícula',
             ],
         ]);

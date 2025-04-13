@@ -1,13 +1,18 @@
-import AppLayout from '@/layouts/app-layout';
-import { type BreadcrumbItem } from '@/types';
-import { Head } from '@inertiajs/react';
+import { useEffect } from 'react';
 
-import { router } from '@inertiajs/react';
+import { Head, router } from '@inertiajs/react';
+
+import AppLayout from '@/layouts/app-layout';
+
+import { type BreadcrumbItem } from '@/types';
 
 import { Button } from '@/components/ui/button';
-import { Download, PlusIcon } from 'lucide-react';
+
 import { Student, columns } from './components/columns';
 import { DataTable } from './components/data-table';
+
+import { Download, PlusIcon } from 'lucide-react';
+import { toast } from 'sonner';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -18,9 +23,26 @@ const breadcrumbs: BreadcrumbItem[] = [
 
 interface Props {
     students: Student[];
+    flash?: {
+        success?: string;
+        error?: string;
+        description?: string;
+    };
 }
 
-export default function StudentView({ students }: Props) {
+export default function StudentView({ students, flash }: Props) {
+    useEffect(() => {
+        if (flash?.success) {
+            toast.success(flash.success, {
+                description: flash.description,
+            });
+        }
+        if (flash?.error) {
+            toast.error(flash.error, {
+                description: flash.description,
+            });
+        }
+    }, [flash]);
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Alumnos" />

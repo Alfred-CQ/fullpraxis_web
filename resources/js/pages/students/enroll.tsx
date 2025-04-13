@@ -1,7 +1,14 @@
-import AppLayout from '@/layouts/app-layout';
-import { type BreadcrumbItem } from '@/types';
+import { useEffect } from 'react';
+
 import { Head } from '@inertiajs/react';
+
+import AppLayout from '@/layouts/app-layout';
+
+import { type BreadcrumbItem } from '@/types';
+
 import { InputForm } from './components/form';
+
+import { toast } from 'sonner';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -14,7 +21,28 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
 ];
 
-export default function StudentRegister() {
+interface Props {
+    flash?: {
+        success?: string;
+        error?: string;
+        description?: string;
+    };
+}
+
+export default function StudentRegister({ flash }: Props) {
+    useEffect(() => {
+        if (flash?.success) {
+            toast.success(flash.success, {
+                description: flash.description,
+            });
+        }
+        if (flash?.error) {
+            toast.error(flash.error, {
+                description: flash.description,
+            });
+        }
+        console.log(flash);
+    }, [flash]);
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Registro" />
