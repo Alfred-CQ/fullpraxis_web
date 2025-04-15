@@ -49,7 +49,7 @@ export default function StudentView({ students, flash }: Props) {
             <Head title="Alumnos" />
             <div className="flex h-full flex-1 flex-col gap-4 rounded-xl p-4">
                 <div className="flex justify-end gap-x-2">
-                    <Button variant="outline" size="sm" onClick={() => window.open(route('students.carnets'), '_blank')}>
+                    <Button variant="outline" size="sm" onClick={() => window.open(route('students.all.carnets'), '_blank')}>
                         <Download />
                         <span className="hidden lg:inline">Descargar Carnets</span>
                     </Button>
@@ -59,7 +59,7 @@ export default function StudentView({ students, flash }: Props) {
                         disabled={selectedStudents.length === 0}
                         onClick={() => {
                             const ids = selectedStudents.map((s) => s.student_id);
-                            router.post(route('students.nada.download-selected'), { ids });
+                            window.open(route('students.selected.carnets', { ids }), '_blank');
                         }}
                     >
                         <Download />

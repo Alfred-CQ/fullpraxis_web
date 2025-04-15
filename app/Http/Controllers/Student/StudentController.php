@@ -198,12 +198,22 @@ class StudentController extends Controller
 
         $latestEnrollment = $student->person->enrollment()->latest('enrollment_date')->first();
 
+        
+            
         $first_names = $student->person->first_names;
         $last_names = $student->person->last_names;
         $doi = $student->person->doi;
         $photo_path = $student->photo_path ? storage_path('app/public/' . $student->photo_path) : null;
         $start_date = Carbon::parse($latestEnrollment->start_date)->format('d    m     y');
+        $shift = $latestEnrollment->shift;
 
+        $shiftTranslations = [
+            'morning' => '  Mañana',
+            'afternoon' => '    Tarde',
+            'both' => 'Completo'
+        ];
+
+        $translatedShift = $shiftTranslations[strtolower($shift)] ?? $shift;
 
         $image->text($last_names, 280, 164, function ($font) {
             $font->filename(public_path('fonts/Open_Sans/static/OpenSans-Bold.ttf'));
@@ -230,6 +240,14 @@ class StudentController extends Controller
         });
 
         $image->text($start_date, 818, 410, function ($font) {
+            $font->filename(public_path('fonts/Open_Sans/static/OpenSans-Bold.ttf'));
+            $font->size(32);
+            $font->color('#000000');
+            $font->align('left');
+            $font->valign('top');
+        });
+
+        $image->text($translatedShift, 70, 415, function ($font) {
             $font->filename(public_path('fonts/Open_Sans/static/OpenSans-Bold.ttf'));
             $font->size(32);
             $font->color('#000000');
@@ -426,10 +444,22 @@ class StudentController extends Controller
         ]);
     }
 
-    public function downloadSelected(Request $request)
+    public function generateSelectedCarnetsPdf(Request $request)
     {
         $selectedStudents = $request->input('ids', []);
 
-        //dd($selectedStudents);
+        // find the students by their IDs
+        $students = Student::with('person')->whereIn('id', $selectedStudents)->get();
+
+        foreach ($students as $student) {
+            $image = $this->generateCarnetImage($student);
+            $data[] = ['imageData' => $image];
+        }
+
+        $pdf = Pdf::loadView('students.carnet_batch', ['students' => $data]);
+        $pdf->setPaper('A4', 'landscape');
+
+        return $pdf->stream('carnets.pdf');
+        
     }
 }
