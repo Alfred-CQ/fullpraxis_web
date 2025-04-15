@@ -27,11 +27,11 @@ export const columns: ColumnDef<Enrollment>[] = [
     },
     {
         accessorKey: 'student_doi',
-        header: 'DNI del Estudiante',
+        header: 'DNI',
     },
     {
         accessorKey: 'study_area',
-        header: 'Área de Estudio',
+        header: 'Área',
     },
     {
         accessorKey: 'enrollment_date',
@@ -40,25 +40,25 @@ export const columns: ColumnDef<Enrollment>[] = [
             const rawDate = getValue() as string;
             const date = new Date(rawDate + 'T00:00:00');
             return date.toLocaleDateString('es-PE', {
-              day: '2-digit',
-              month: '2-digit',
-              year: 'numeric',
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric',
             });
-          },
+        },
     },
     {
         accessorKey: 'start_date',
         header: 'Fecha de Inicio',
         cell: ({ getValue }) => {
-          const rawDate = getValue() as string;
-          const date = new Date(rawDate + 'T00:00:00');
-          return date.toLocaleDateString('es-PE', {
-            day: '2-digit',
-            month: '2-digit',
-            year: 'numeric',
-          });
+            const rawDate = getValue() as string;
+            const date = new Date(rawDate + 'T00:00:00');
+            return date.toLocaleDateString('es-PE', {
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric',
+            });
         },
-      },
+    },
     {
         accessorKey: 'end_date',
         header: 'Fecha de Fin',
@@ -66,24 +66,24 @@ export const columns: ColumnDef<Enrollment>[] = [
             const rawDate = getValue() as string;
             const date = new Date(rawDate + 'T00:00:00');
             return date.toLocaleDateString('es-PE', {
-              day: '2-digit',
-              month: '2-digit',
-              year: 'numeric',
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric',
             });
-          },
+        },
     },
     {
         accessorKey: 'due_date',
-        header: 'Fecha de Vencimiento',
+        header: 'Vencimiento de Pago',
         cell: ({ getValue }) => {
             const rawDate = getValue() as string;
             const date = new Date(rawDate + 'T00:00:00');
             return date.toLocaleDateString('es-PE', {
-              day: '2-digit',
-              month: '2-digit',
-              year: 'numeric',
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric',
             });
-          },
+        },
     },
     {
         accessorKey: 'total_payment',
@@ -92,14 +92,14 @@ export const columns: ColumnDef<Enrollment>[] = [
     },
     {
         accessorKey: 'debt_status',
-        header: 'Estado de Deuda',
+        header: 'Deuda',
         cell: ({ getValue }) => {
             const status = getValue() as string;
 
             const debtStatusTranslations = {
-                'Paid': 'Pagado',
-                'Pending': 'Pendiente',
-                'Overdue': 'Vencido'
+                Paid: 'Pagado',
+                Pending: 'Pendiente',
+                Overdue: 'Vencido',
             };
 
             const translatedStatus = debtStatusTranslations[status as keyof typeof debtStatusTranslations] || status;
@@ -124,21 +124,22 @@ export const columns: ColumnDef<Enrollment>[] = [
     },
     {
         accessorKey: 'academic_term_name',
-        header: 'Nombre del Ciclo Académico',
+        header: 'Ciclo Académico',
     },
     {
-        accessorKey: "shift",
-        header: "Turno",
+        accessorKey: 'shift',
+        header: 'Turno',
         cell: ({ row }) => {
-          const shift = row.getValue("shift") as string;
-          const formatted = {
-            morning: 'Mañana',
-            afternoon: 'Tarde',
-            both: 'Ambos'
-          }[shift] || shift;
-          
-          return <div className="font-medium">{formatted}</div>
-        }
+            const shift = row.getValue('shift') as string;
+            const formatted =
+                {
+                    morning: 'Mañana',
+                    afternoon: 'Tarde',
+                    both: 'Ambos',
+                }[shift] || shift;
+
+            return <div className="font-medium">{formatted}</div>;
+        },
     },
     {
         id: 'actions',

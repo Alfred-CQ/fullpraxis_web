@@ -320,7 +320,7 @@ class StudentController extends Controller
             $font->size(32);
             $font->color('#000000');
             $font->align('left');
-            $font->valign('top');   
+            $font->valign('top');
         });
 
         if(file_exists($photo_path)) {
@@ -426,4 +426,10 @@ class StudentController extends Controller
         ]);
     }
 
+    public function downloadSelected(Request $request)
+    {
+        $selectedStudents = $request->input('ids', []);
+
+        //dd($selectedStudents);
+    }
 }

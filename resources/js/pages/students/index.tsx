@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 import { Head, router } from '@inertiajs/react';
 
@@ -43,14 +43,27 @@ export default function StudentView({ students, flash }: Props) {
             });
         }
     }, [flash]);
+    const [selectedStudents, setSelectedStudents] = useState<Student[]>([]);
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Alumnos" />
             <div className="flex h-full flex-1 flex-col gap-4 rounded-xl p-4">
-                <div className="flex justify-end">
+                <div className="flex justify-end gap-x-2">
                     <Button variant="outline" size="sm" onClick={() => window.open(route('students.carnets'), '_blank')}>
                         <Download />
                         <span className="hidden lg:inline">Descargar Carnets</span>
+                    </Button>
+                    <Button
+                        variant="outline"
+                        size="sm"
+                        disabled={selectedStudents.length === 0}
+                        onClick={() => {
+                            const ids = selectedStudents.map((s) => s.student_id);
+                            router.post(route('students.nada.download-selected'), { ids });
+                        }}
+                    >
+                        <Download />
+                        <span className="hidden lg:inline">Descargar Carnets Seleccionados</span>
                     </Button>
                     <Button variant="outline" size="sm" onClick={() => router.get(route('students.enroll'))}>
                         <PlusIcon />
@@ -58,7 +71,7 @@ export default function StudentView({ students, flash }: Props) {
                     </Button>
                 </div>
                 <div className="relative min-h-[100vh] flex-1 overflow-hidden rounded-xl md:min-h-min">
-                    <DataTable columns={columns} data={students} />
+                    <DataTable columns={columns} data={students} onSelectedChange={setSelectedStudents} />
                 </div>
             </div>
         </AppLayout>

@@ -5,6 +5,8 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Student\StudentController;
 
 Route::middleware(['auth'])->group(function () {
+
+
     Route::resource('students', StudentController::class)->except(['show']);
 
     Route::get('students/registrar', [StudentController::class, 'create'])->name('students.enroll');
@@ -20,5 +22,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/students/{id}/attendance-report-pdf', [StudentController::class, 'attendanceReportPdf'])->name('students.attendance-report-pdf');
     Route::get('/students/{id}/attendance-report', [StudentController::class, 'attendanceReportPdf'])->name('students.attendance-report');
 
-    Route::get('/students/{id}/calendar', [StudentController::class, 'calendar'])->name('students.calendar');
+    //Route::get('/students/{id}/calendar', [StudentController::class, 'calendar'])->name('students.calendar');
+
+    Route::post('/students/actions/download-selected', [StudentController::class, 'downloadSelected'])->name('students.nada.download-selected');
 });

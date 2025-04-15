@@ -1,9 +1,11 @@
 'use client';
 
-import { Button } from '@/components/ui/button';
+import { router } from '@inertiajs/react';
+
 import { ColumnDef } from '@tanstack/react-table';
 
-import { router } from '@inertiajs/react';
+import { Button } from '@/components/ui/button';
+import { Checkbox } from '@/components/ui/checkbox';
 
 import { CalendarClock, History, IdCard, UserPen } from 'lucide-react';
 
@@ -20,6 +22,26 @@ export type Student = {
 };
 
 export const columns: ColumnDef<Student>[] = [
+    {
+        id: 'select',
+        header: ({ table }) => (
+            <div className="flex items-center justify-center">
+                <Checkbox
+                    style={{ borderColor: 'white' }}
+                    checked={table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && 'indeterminate')}
+                    onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+                    aria-label="Select all"
+                />
+            </div>
+        ),
+        cell: ({ row }) => (
+            <div className="flex items-center justify-center">
+                <Checkbox checked={row.getIsSelected()} onCheckedChange={(value) => row.toggleSelected(!!value)} aria-label="Select row" />
+            </div>
+        ),
+        enableSorting: false,
+        enableHiding: false,
+    },
     { accessorKey: '_number', header: '#', cell: ({ row }) => row.index + 1 },
 
     {
