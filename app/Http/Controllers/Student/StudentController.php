@@ -179,16 +179,39 @@ class StudentController extends Controller
     {
         $students = Student::with('person')->get();
 
+        $studentsWithErrors = [];
         $data = [];
-        foreach ($students as $student) {
-            $image = $this->generateCarnetImage($student);
-            $data[] = ['imageData' => $image];
+
+        try {
+            foreach ($students as $student) {
+                $latestEnrollment = $student->person->enrollment()->latest('enrollment_date')->first();
+
+                if ($latestEnrollment == null) {
+                    $studentsWithErrors[] = $student->person->doi . ' ';
+                    continue;
+                }
+
+                $image = $this->generateCarnetImage($student);
+                $data[] = ['imageData' => $image];
+            }
+
+            if (!empty($studentsWithErrors)) {
+                return redirect()->back()->with('flash', [
+                    'error' => 'Uno o más estudiantes no tienen matrícula.',
+                    'description' => 'Los siguientes estudiantes no tienen matrícula: ' . implode(' , ', $studentsWithErrors),
+                ]);
+            }
+
+            $pdf = Pdf::loadView('students.carnet_batch', ['students' => $data]);
+            $pdf->setPaper('A4', 'portrait');
+
+            return $pdf->stream('carnets.pdf');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('flash', [
+                'error' => 'Error al generar los carnets.',
+                'description' => $e->getMessage(),
+            ]);
         }
-
-        $pdf = Pdf::loadView('students.carnet_batch', ['students' => $data]);
-        $pdf->setPaper('A4', 'landscape');
-
-        return $pdf->stream('carnets.pdf');
     }
 
     private function generateCarnetImage($student)
@@ -198,8 +221,11 @@ class StudentController extends Controller
 
         $latestEnrollment = $student->person->enrollment()->latest('enrollment_date')->first();
 
-        
-            
+        if ($latestEnrollment == null) {
+            throw new \Exception('No se encontró la matrícula más reciente para el estudiante.');
+        }
+
+
         $first_names = $student->person->first_names;
         $last_names = $student->person->last_names;
         $doi = $student->person->doi;
@@ -448,18 +474,39 @@ class StudentController extends Controller
     {
         $selectedStudents = $request->input('ids', []);
 
-        // find the students by their IDs
         $students = Student::with('person')->whereIn('id', $selectedStudents)->get();
 
-        foreach ($students as $student) {
-            $image = $this->generateCarnetImage($student);
-            $data[] = ['imageData' => $image];
+        $studentsWithErrors = [];
+
+        try {
+            foreach ($students as $student) {
+                $latestEnrollment = $student->person->enrollment()->latest('enrollment_date')->first();
+
+                if ($latestEnrollment == null) {
+                    $studentsWithErrors[] = $student->person->doi . ' ';
+                    continue;
+                }
+
+                $image = $this->generateCarnetImage($student);
+                $data[] = ['imageData' => $image];
+            }
+
+            if (!empty($studentsWithErrors)) {
+                return redirect()->back()->with('flash', [
+                    'error' => 'Uno o más estudiantes no tienen matrícula.',
+                    'description' => 'Los siguientes estudiantes no tienen matrícula: ' . implode(' , ', $studentsWithErrors),
+                ]);
+            }
+
+            $pdf = Pdf::loadView('students.carnet_batch', ['students' => $data]);
+            $pdf->setPaper('A4', 'portrait');
+
+            return $pdf->stream('carnets.pdf');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('flash', [
+                'error' => 'Error al generar los carnets.',
+                'description' => $e->getMessage(),
+            ]);
         }
-
-        $pdf = Pdf::loadView('students.carnet_batch', ['students' => $data]);
-        $pdf->setPaper('A4', 'portrait');
-
-        return $pdf->stream('carnets.pdf');
-        
     }
 }
