@@ -16,6 +16,7 @@ export type Enrollment = {
     debt_status: string;
     student_doi: string;
     academic_term_name: string;
+    shift: string;
 };
 
 export const columns: ColumnDef<Enrollment>[] = [
@@ -124,6 +125,20 @@ export const columns: ColumnDef<Enrollment>[] = [
     {
         accessorKey: 'academic_term_name',
         header: 'Nombre del Ciclo Académico',
+    },
+    {
+        accessorKey: "shift",
+        header: "Turno",
+        cell: ({ row }) => {
+          const shift = row.getValue("shift") as string;
+          const formatted = {
+            morning: 'Mañana',
+            afternoon: 'Tarde',
+            both: 'Ambos'
+          }[shift] || shift;
+          
+          return <div className="font-medium">{formatted}</div>
+        }
     },
     {
         id: 'actions',

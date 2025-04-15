@@ -21,6 +21,7 @@ class Enrollment extends Model
         'total_payment',
         'debt_status',
         'study_area',
+        'shift',
     ];
 
 

@@ -21,11 +21,21 @@ const debtStatusTranslation: Record<string, string> = {
 
 const EstadoDeuda = ['Paid', 'Pending', 'Overdue'] as const;
 
+const Turnos = ['morning', 'afternoon', 'both'] as const;
+const shiftTranslation: Record<string, string> = {
+  morning: 'Mañana',
+  afternoon: 'Tarde',
+  both: 'Ambos'
+};
+
 // Validation schema with Zod
 const FormSchema = z.object({
     doi: z.string().min(8, { message: 'El DNI debe tener 8 caracteres.' }).max(8, { message: 'El DNI debe tener 8 caracteres.' }),
     academic_term_id: z.string().nonempty({ message: 'Debe seleccionar un ciclo.' }),
     study_area: z.enum(AreaDeEstudios, { errorMap: () => ({ message: 'Debe seleccionar un área de estudios válida.' }) }),
+    shift: z.enum(Turnos, {
+        errorMap: () => ({ message: 'Debe seleccionar un turno válido.' }),
+    }),
     enrollment_date: z.string().nonempty({ message: 'La fecha de matrícula es obligatoria.' }),
     start_date: z.string().nonempty({ message: 'La fecha de inicio es obligatoria.' }),
     end_date: z.string().nonempty({ message: 'La fecha de fin es obligatoria.' }),
@@ -47,6 +57,7 @@ export function EnrollmentForm({ seasons }: { seasons: { id: number; name: strin
             due_date: '',
             total_payment: '',
             debt_status: undefined,
+            shift: undefined,
         },
     });
 
@@ -119,6 +130,31 @@ export function EnrollmentForm({ seasons }: { seasons: { id: number; name: strin
                             <FormMessage />
                         </FormItem>
                     )}
+                />
+
+                <FormField
+                control={form.control}
+                name="shift"
+                render={({ field }) => (
+                    <FormItem>
+                    <FormLabel>Turno</FormLabel>
+                    <FormControl>
+                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                        <SelectTrigger>
+                            <SelectValue placeholder="Seleccione un turno" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            {Turnos.map((turno) => (
+                            <SelectItem key={turno} value={turno}>
+                                {shiftTranslation[turno]}
+                            </SelectItem>
+                            ))}
+                        </SelectContent>
+                        </Select>
+                    </FormControl>
+                    <FormMessage />
+                    </FormItem>
+                )}
                 />
 
                 <FormField

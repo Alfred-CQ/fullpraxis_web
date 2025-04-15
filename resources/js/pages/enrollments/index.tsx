@@ -20,6 +20,7 @@ export type Enrollment = {
     debt_status: string;
     student_doi: string;
     academic_term_name: string;
+    shift: string;
 };
 
 interface Props {

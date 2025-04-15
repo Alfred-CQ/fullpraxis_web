@@ -47,7 +47,8 @@ class StoreEnrollmentRequest extends FormRequest
             'end_date' => 'required|date|after:start_date',
             'due_date' => 'required|date|after:start_date',
             'total_payment' => 'required|numeric|min:0',
-            'debt_status' => 'required|in:Paid,Pending,Overdue'
+            'debt_status' => 'required|in:Paid,Pending,Overdue',
+            'shift' => 'required|in:morning,afternoon,both',
         ];  
     }
 

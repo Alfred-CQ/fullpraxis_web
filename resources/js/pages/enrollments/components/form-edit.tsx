@@ -19,10 +19,18 @@ const debtStatusTranslation: Record<string, string> = {
 
 const EstadoDeuda = ['Paid', 'Pending', 'Overdue'] as const;
 
+const Turnos = ['morning', 'afternoon', 'both'] as const;
+const shiftTranslation: Record<string, string> = {
+  morning: 'Mañana',
+  afternoon: 'Tarde',
+  both: 'Ambos'
+};
+
 const FormSchema = z.object({
     doi: z.string().min(8, { message: 'El DNI debe tener 8 caracteres.' }).max(8, { message: 'El DNI debe tener 8 caracteres.' }),
     academic_term_id: z.string().nonempty({ message: 'Debe seleccionar un ciclo.' }),
     study_area: z.enum(studyAreas, { errorMap: () => ({ message: 'Debe seleccionar un área de estudios válida.' }) }),
+    shift: z.enum(Turnos, { errorMap: () => ({ message: 'Debe seleccionar un turno válido.' }) }),
     enrollment_date: z.string().nonempty({ message: 'La fecha de matrícula es obligatoria.' }),
     start_date: z.string().nonempty({ message: 'La fecha de inicio es obligatoria.' }),
     end_date: z.string().nonempty({ message: 'La fecha de fin es obligatoria.' }),
@@ -43,6 +51,7 @@ interface Props {
         total_payment: number;
         debt_status: string;
         academic_term_id: number;
+        shift: string;
     };
     academic_terms: { id: number; name: string }[];
 }
@@ -64,6 +73,9 @@ export function EnrollmentEditForm({ enrollment, academic_terms }: Props) {
             debt_status: EstadoDeuda.includes(enrollment.debt_status as typeof EstadoDeuda[number])
                 ? (enrollment.debt_status as typeof EstadoDeuda[number])
                 : undefined,
+            shift: Turnos.includes(enrollment.shift as typeof Turnos[number])
+                ? (enrollment.shift as typeof Turnos[number])
+                : undefined, 
         },
     });
 
@@ -116,6 +128,30 @@ export function EnrollmentEditForm({ enrollment, academic_terms }: Props) {
                     )}
                 />
 
+                <FormField
+                control={form.control}
+                name="shift"
+                render={({ field }) => (
+                    <FormItem>
+                    <FormLabel>Turno</FormLabel>
+                    <FormControl>
+                        <Select onValueChange={field.onChange} value={field.value}>
+                        <SelectTrigger>
+                            <SelectValue placeholder="Seleccione un turno" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            {Turnos.map((turno) => (
+                            <SelectItem key={turno} value={turno}>
+                                {shiftTranslation[turno]}
+                            </SelectItem>
+                            ))}
+                        </SelectContent>
+                        </Select>
+                    </FormControl>
+                    <FormMessage />
+                    </FormItem>
+                )}
+                />
 
                 {/* Fecha de Matrícula */}
                 <FormField

@@ -34,6 +34,7 @@ class EnrollmentController extends Controller
                     'debt_status' => $enrollment->debt_status,
                     'student_doi' => $enrollment->person->doi,
                     'academic_term_name' => $enrollment->academicTerm->name,
+                    'shift' => $enrollment->shift,
                 ];
             });
 
@@ -68,6 +69,7 @@ class EnrollmentController extends Controller
                 'due_date' => $validated['due_date'],
                 'total_payment' => $validated['total_payment'],
                 'debt_status' => $validated['debt_status'],
+                'shift' => $validated['shift'],
             ]);
             
 
@@ -100,6 +102,7 @@ class EnrollmentController extends Controller
                 'total_payment' => $enrollment->total_payment,
                 'debt_status' => $enrollment->debt_status,
                 'academic_term_id' => $enrollment->academic_term_id,
+                'shift' => $enrollment->shift,  
             ],
             'academic_terms' => $academicTerms,
         ]);
@@ -123,6 +126,7 @@ class EnrollmentController extends Controller
                 'due_date' => $validated['due_date'],
                 'total_payment' => $validated['total_payment'],
                 'debt_status' => $validated['debt_status'],
+                'shift' => $validated['shift'],
             ]);
     
             return redirect()->route('enrollments.index')->with('flash', [

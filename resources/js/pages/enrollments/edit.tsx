@@ -30,6 +30,7 @@ interface Props {
         total_payment: number;
         debt_status: string;
         academic_term_id: number;
+        shift: string;
     };
     academic_terms: { id: number; name: string }[];
     flash?: {
