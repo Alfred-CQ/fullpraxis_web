@@ -457,7 +457,7 @@ class StudentController extends Controller
         }
 
         $pdf = Pdf::loadView('students.carnet_batch', ['students' => $data]);
-        $pdf->setPaper('A4', 'landscape');
+        $pdf->setPaper('A4', 'portrait');
 
         return $pdf->stream('carnets.pdf');
         

@@ -1,50 +1,58 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
-    <meta charset="utf-8">
-    <title>Planchas de Carnets</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carnets</title>
     <style>
-        @page {
-            size: A4 landscape;
-            margin: 20px;
-        }
         body {
             margin: 0;
-            padding: 0;
-            font-family: sans-serif;
+            padding: 0px;
         }
-        .page {
-            display: flex;
-            flex-wrap: wrap;
-            width: 100%;
-            height: 100%;
-            page-break-after: always;
+
+        .page-container {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            page-break-inside: avoid;
         }
+
         .carnet-container {
-            width: 50%; /* 2 columnas */
-            padding: 10px;
-            box-sizing: border-box;
+            width: 600px;
+            margin-bottom: 5px;
+            position: relative;
         }
+
         .carnet-image {
             width: 100%;
             height: auto;
-            max-height: 150px;
             object-fit: contain;
-            border: 1px solid #ccc;
+        }
+
+        @media print {
+            body {
+                padding: 0;
+            }
+            
+            .page-container {
+                gap: 0;
+            }
+            
+            .carnet-container {
+                margin-bottom: 0;
+                page-break-after: avoid;
+                page-break-before: avoid;
+            }
         }
     </style>
 </head>
 <body>
-
-@foreach(collect($students)->chunk(6) as $group)
-    <div class="page">
-        @foreach($group as $student)
+    <div class="page-container">
+        @foreach($students as $student)
             <div class="carnet-container">
-                <img class="carnet-image" src="data:image/png;base64,{{ base64_encode($student['imageData']) }}" alt="Carnet">
+                <img class="carnet-image" src="data:image/jpeg;base64,{{ base64_encode($student['imageData']) }}" alt="Carnet">
             </div>
         @endforeach
     </div>
-@endforeach
-
 </body>
 </html>
