@@ -439,8 +439,17 @@ class StudentController extends Controller
         }
 
         $matricula = $persona->enrollment->first();
-        $diasRestantes = $matricula ? Carbon::now()->diffInDays($matricula->fecha_vencimiento, false) : null;
 
+        $diasRestantes = null;
+        if ($matricula && $matricula->due_date) {
+            $hoy = Carbon::now('America/Lima')->startOfDay();
+            $fechaVencimiento = Carbon::parse($matricula->due_date)
+                ->timezone('America/Lima')
+                ->startOfDay();
+            
+            $diasRestantes = $hoy->diffInDays($fechaVencimiento, false);
+        }
+        
         return response()->json([
             'success' => true,
             'alumno' => [
