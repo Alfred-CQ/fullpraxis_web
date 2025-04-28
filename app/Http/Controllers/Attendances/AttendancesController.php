@@ -17,7 +17,9 @@ class AttendancesController extends Controller
     {
         $validatedData = $request->validate([
             'doi' => 'required|string',
-            'attendance_type' => 'required|in:Entry,Exit', 
+            'attendance_type' => 'required|in:Entry,Exit',
+            'user' => 'required|string',
+            'ip_address' => 'required|string',
         ]);
 
         $alumnoResponse = (new StudentController)->find_student($request);
@@ -30,6 +32,8 @@ class AttendancesController extends Controller
         $asistencia = Attendance::create([
             'person_id' => $responseData['alumno']['id'], 
             'attendance_type' => $request->attendance_type,
+            'user' => $request->user,
+            'ip_address' => $request->ip_address,
             'recorded_at' => Carbon::now('America/Lima'),
         ]);
 
