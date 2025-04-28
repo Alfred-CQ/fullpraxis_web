@@ -15,6 +15,8 @@ class Attendance extends Model
     protected $fillable = [
         'person_id',
         'recorded_at',
+        'user',
+        'ip_address',
         'attendance_type',
     ];
 
