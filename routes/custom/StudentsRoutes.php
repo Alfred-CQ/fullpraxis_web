@@ -23,7 +23,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/students/{id}/attendance-report-pdf', [StudentController::class, 'attendanceReportPdf'])->name('students.attendance-report-pdf');
     Route::get('/students/{id}/attendance-report', [StudentController::class, 'attendanceReportPdf'])->name('students.attendance-report');
 
-    //Route::get('/students/{id}/calendar', [StudentController::class, 'calendar'])->name('students.calendar');
+    Route::get('/students/{id}/calendar', [StudentController::class, 'calendar'])->name('students.calendar');
 
     Route::post('/students/actions/download-selected', [StudentController::class, 'downloadSelected'])->name('students.nada.download-selected');
 });
