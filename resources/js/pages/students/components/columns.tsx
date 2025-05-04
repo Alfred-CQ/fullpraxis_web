@@ -107,7 +107,7 @@ export const columns: ColumnDef<Student>[] = [
                         <IdCard />
                     </Button>
 
-                    <Button variant="outline" size="icon" onClick={() => window.open(route('students.calendar', student.student_id), '_blank')}>
+                    <Button variant="outline" size="icon" onClick={() => router.visit(route('students.calendar', student.student_id))}>
                         <CalendarClock />
                     </Button>
 

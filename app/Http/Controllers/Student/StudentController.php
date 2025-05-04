@@ -446,10 +446,10 @@ class StudentController extends Controller
             $fechaVencimiento = Carbon::parse($matricula->due_date)
                 ->timezone('America/Lima')
                 ->startOfDay();
-            
+
             $diasRestantes = $hoy->diffInDays($fechaVencimiento, false);
         }
-        
+
         return response()->json([
             'success' => true,
             'alumno' => [
@@ -469,13 +469,24 @@ class StudentController extends Controller
     public function calendar($id): Response
     {
         $student = Student::with('person')->where('id', $id)->firstOrFail();
+        $attendances = $student->person->attendances()
+            ->select('recorded_at', 'attendance_type')
+            ->orderBy('recorded_at', 'desc')
+            ->get()
+            ->map(function ($attendance) {
+                return [
+                    'recorded_at' => $attendance->recorded_at,
+                    'attendance_type' => $attendance->attendance_type,
+                ];
+            });
 
-        return Inertia::render('students/CalendarPage', [
+        return Inertia::render('students/calendar', [
             'student' => [
                 'student_id' => $student->id,
                 'first_names' => $student->person->first_names,
                 'last_names' => $student->person->last_names,
             ],
+            'attendances' => $attendances,
         ]);
     }
 
