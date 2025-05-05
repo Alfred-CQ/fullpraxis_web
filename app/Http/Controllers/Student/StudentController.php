@@ -16,6 +16,8 @@ use Inertia\Response;
 use Illuminate\Support\Carbon;
 
 use Barryvdh\DomPDF\Facade\Pdf;
+
+
 use Intervention\Image\ImageManager;
 use Intervention\Image\Drivers\Gd\Driver;
 use Endroid\QrCode\QrCode;
@@ -397,6 +399,16 @@ class StudentController extends Controller
     {
         $student = Student::with('person.attendances')->where('id', $id)->firstOrFail();
 
+        $url = 'https://validez/' . $student->id;
+        $qrPath = public_path('qrs/validez-' . $student->id . '.png');
+
+        if (!file_exists($qrPath)) {
+            $qr = QrCode::create($url)->setSize(100)->setMargin(5);
+            $writer = new PngWriter();
+            $result = $writer->write($qr);
+            file_put_contents($qrPath, $result->getString());
+        }
+
         $attendancesByDay = $student->person->attendances
             ->sortBy('recorded_at')
             ->groupBy(function ($attendance) {
@@ -410,9 +422,11 @@ class StudentController extends Controller
                 'first_names' => $student->person->first_names,
                 'last_names' => $student->person->last_names,
                 'phone_number' => $student->person->phone_number,
+                'photo_path' => $student->photo_path,
             ],
             'attendances' => $attendancesByDay,
         ];
+
 
         $pdf = Pdf::loadView('students.attendance-report-pdf', compact('data'));
 
