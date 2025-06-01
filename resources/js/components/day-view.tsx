@@ -12,7 +12,7 @@ import {
   isSameDay,
   startOfDay,
 } from "date-fns"
-
+import { es } from "date-fns/locale"
 import {
   EndHour,
   StartHour,
@@ -231,7 +231,7 @@ export function DayView({
             >
               {index > 0 && (
                 <span className="bg-background text-muted-foreground/70 absolute -top-3 left-0 flex h-6 w-16 max-w-full items-center justify-end pe-2 text-[10px] sm:pe-4 sm:text-xs">
-                  {format(hour, "h a")}
+                  {format(hour, "h a", { locale: es })}
                 </span>
               )}
             </div>

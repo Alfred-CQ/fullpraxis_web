@@ -13,6 +13,7 @@ import {
   startOfMonth,
   startOfWeek,
 } from "date-fns"
+import { es } from "date-fns/locale"
 import { DefaultStartHour, EventGap, EventHeight } from "@/components/constants"
 import {
   Popover,
@@ -51,7 +52,7 @@ export function MonthView({
   const weekdays = useMemo(() => {
     return Array.from({ length: 7 }).map((_, i) => {
       const date = addDays(startOfWeek(new Date()), i)
-      return format(date, "EEE")
+      return format(date, "EEE", { locale: es })
     })
   }, [])
 
@@ -140,7 +141,7 @@ export function MonthView({
                     }}
                   >
                     <div className="group-data-today:bg-primary group-data-today:text-primary-foreground mt-1 inline-flex size-6 items-center justify-center rounded-full text-sm">
-                      {format(day, "d")}
+                      {format(day, "d", { locale: es })}
                     </div>
                     <div
                       ref={isReferenceCell ? contentRef : null}
@@ -176,7 +177,8 @@ export function MonthView({
                                     <span>
                                       {format(
                                         new Date(event.start),
-                                        "h:mm"
+                                        "h:mm",
+                                        { locale: es }
                                       )}{" "}
                                     </span>
                                   )}
@@ -228,7 +230,7 @@ export function MonthView({
                           >
                             <div className="space-y-2">
                               <div className="text-sm font-medium">
-                                {format(day, "EEE d")}
+                                {format(day, "EEE d", { locale: es})}
                               </div>
                               <div className="space-y-1">
                                 {sortEvents(allEvents).map((event) => {
