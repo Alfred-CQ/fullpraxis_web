@@ -499,7 +499,7 @@ class StudentController extends Controller
                 if (!$student->carnet_path || !Storage::disk('public')->exists($student->carnet_path)) {
                     $imageData = $this->generateCarnetImage($student);
                     Storage::disk('public')->put($carnetPath, $imageData);
-                    $student->update(['carnet_path' => $carnetPath]);
+                    $student->update(['carnet_path' => $carnetPath]);   
                 }
 
                 $imageData = Storage::disk('public')->get($carnetPath);

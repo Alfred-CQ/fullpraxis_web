@@ -17,6 +17,14 @@ class StudentsExport implements FromCollection, WithHeadings, WithMapping
     public function map($student): array
     {
         $latestEnrollment = $student->person->enrollment->sortByDesc('enrollment_date')->first();
+
+        $shiftTranslated = match ($latestEnrollment->shift ?? null) {
+            'morning' => 'Mañana',
+            'afternoon' => 'Tarde',
+            'both' => 'Completo',
+            default => 'No registrado',
+        };
+
         return [
             $student->person->doi,
             $student->person->first_names,
@@ -28,7 +36,7 @@ class StudentsExport implements FromCollection, WithHeadings, WithMapping
             $student->photo_path ? 'Sí' : 'No',
             $student->carnet_path ? 'Sí' : 'No',
             $latestEnrollment->enrollment_date ?? 'No registrada',
-            $latestEnrollment->shift ?? 'No registrado',
+            $shiftTranslated,
         ];
     }
 
