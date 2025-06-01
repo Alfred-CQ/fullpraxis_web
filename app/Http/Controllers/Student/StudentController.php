@@ -13,6 +13,9 @@ use App\Models\Student;
 use Inertia\Inertia;
 use Inertia\Response;
 
+use App\Exports\StudentsExport;
+use Maatwebsite\Excel\Facades\Excel;
+
 use Illuminate\Support\Carbon;
 
 use Barryvdh\DomPDF\Facade\Pdf;
@@ -519,5 +522,10 @@ class StudentController extends Controller
                 'description' => $e->getMessage(),
             ]);
         }
+    }
+
+    public function export()
+    {
+        return Excel::download(new StudentsExport, 'estudiantes.xlsx');
     }
 }
