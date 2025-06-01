@@ -7,6 +7,7 @@ import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input'; // <-- IMPORTANTE
 
 import { Student, columns } from './components/columns';
 import { DataTable } from './components/data-table';
@@ -51,34 +52,43 @@ export default function StudentView({ students, flash }: Props) {
         }
     }, [flash, errors]);
     const [selectedStudents, setSelectedStudents] = useState<Student[]>([]);
+    const [dniFilter, setDniFilter] = useState(''); // <-- NUEVO ESTADO
+
+    // Filtrado por DNI
+    const filteredStudents = students.filter((student) => student.doi.toLowerCase().includes(dniFilter.toLowerCase()));
+
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Alumnos" />
             <div className="flex h-full flex-1 flex-col gap-4 rounded-xl bg-[url('/images/main-logo_2x_opacity.png')] bg-[length:850px_auto] bg-center bg-no-repeat p-4">
-                <div className="flex justify-end gap-x-2">
-                    <Button variant="outline" size="sm" onClick={() => window.open(route('students.all.carnets'), '_blank')}>
-                        <Download />
-                        <span className="hidden lg:inline">Descargar Carnets</span>
-                    </Button>
-                    <Button
-                        variant="outline"
-                        size="sm"
-                        disabled={selectedStudents.length === 0}
-                        onClick={() => {
-                            const ids = selectedStudents.map((s) => s.student_id);
-                            window.open(route('students.selected.carnets', { ids }), '_blank');
-                        }}
-                    >
-                        <Download />
-                        <span className="hidden lg:inline">Descargar Carnets Seleccionados</span>
-                    </Button>
-                    <Button size="sm" onClick={() => router.get(route('students.enroll'))}>
-                        <PlusIcon />
-                        <span className="hidden lg:inline">Agregar</span>
-                    </Button>
+                <div className="flex justify-between gap-x-2">
+                    {/* FILTRO POR DNI */}
+                    <Input placeholder="Filtrar por DNI..." value={dniFilter} onChange={(e) => setDniFilter(e.target.value)} className="max-w-xs" />
+                    <div className="flex gap-x-2">
+                        <Button variant="outline" size="sm" onClick={() => window.open(route('students.all.carnets'), '_blank')}>
+                            <Download />
+                            <span className="hidden lg:inline">Descargar Carnets</span>
+                        </Button>
+                        <Button
+                            variant="outline"
+                            size="sm"
+                            disabled={selectedStudents.length === 0}
+                            onClick={() => {
+                                const ids = selectedStudents.map((s) => s.student_id);
+                                window.open(route('students.selected.carnets', { ids }), '_blank');
+                            }}
+                        >
+                            <Download />
+                            <span className="hidden lg:inline">Descargar Carnets Seleccionados</span>
+                        </Button>
+                        <Button size="sm" onClick={() => router.get(route('students.enroll'))}>
+                            <PlusIcon />
+                            <span className="hidden lg:inline">Agregar</span>
+                        </Button>
+                    </div>
                 </div>
                 <div className="relative min-h-[100vh] flex-1 overflow-hidden rounded-xl md:min-h-min">
-                    <DataTable columns={columns} data={students} onSelectedChange={setSelectedStudents} />
+                    <DataTable columns={columns} data={filteredStudents} onSelectedChange={setSelectedStudents} />
                 </div>
             </div>
         </AppLayout>

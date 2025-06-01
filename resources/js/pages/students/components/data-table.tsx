@@ -14,6 +14,7 @@ interface DataTableProps<TData, TValue> {
 
 export function DataTable<TData, TValue>({ columns, data, onSelectedChange }: DataTableProps<TData, TValue>) {
     const [rowSelection, setRowSelection] = React.useState({});
+
     const table = useReactTable({
         data,
         columns,
@@ -23,9 +24,11 @@ export function DataTable<TData, TValue>({ columns, data, onSelectedChange }: Da
     });
 
     React.useEffect(() => {
-        const selected = table.getSelectedRowModel().rows.map((row) => row.original);
-        onSelectedChange?.(selected);
-    }, [table.getSelectedRowModel().rows, onSelectedChange]);
+        if (onSelectedChange) {
+            const selected = table.getSelectedRowModel().rows.map((row) => row.original);
+            onSelectedChange(selected);
+        }
+    }, [rowSelection]);
 
     return (
         <div className="rounded-md border">
