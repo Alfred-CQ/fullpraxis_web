@@ -54,7 +54,7 @@ export default function StudentView({ students, flash }: Props) {
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Alumnos" />
-            <div className="flex h-full flex-1 flex-col gap-4 rounded-xl bg-[url('/images/main-logo_2x_opacity.png')] bg-[length:550px_auto] bg-center bg-no-repeat p-4">
+            <div className="flex h-full flex-1 flex-col gap-4 rounded-xl bg-[url('/images/main-logo_2x_opacity.png')] bg-[length:850px_auto] bg-center bg-no-repeat p-4">
                 <div className="flex justify-end gap-x-2">
                     <Button variant="outline" size="sm" onClick={() => window.open(route('students.all.carnets'), '_blank')}>
                         <Download />

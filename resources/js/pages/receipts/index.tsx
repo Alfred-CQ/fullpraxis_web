@@ -37,7 +37,7 @@ export default function ReceiptsView({ receipts }: Props) {
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Recibos" />
-            <div className="flex h-full flex-1 flex-col gap-4 rounded-xl bg-[url('/images/main-logo_2x_opacity.png')] bg-[length:550px_auto] bg-center bg-no-repeat p-4">
+            <div className="flex h-full flex-1 flex-col gap-4 rounded-xl bg-[url('/images/main-logo_2x_opacity.png')] bg-[length:850px_auto] bg-center bg-no-repeat p-4">
                 <div className="flex justify-end">
                     <Button size="sm" onClick={() => router.get(route('receipts.create'))}>
                         <PlusIcon />
