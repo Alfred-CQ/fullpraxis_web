@@ -17,6 +17,7 @@ use Illuminate\Support\Carbon;
 
 use Barryvdh\DomPDF\Facade\Pdf;
 
+use Illuminate\Support\Facades\Storage;
 
 use Intervention\Image\ImageManager;
 use Intervention\Image\Drivers\Gd\Driver;
@@ -76,7 +77,7 @@ class StudentController extends Controller
                 $photoPath = $request->file('photo')->store('students/photos', 'public');
             }
 
-            Student::create([
+            $student = Student::create([
                 'person_id' => $person->id,
                 'birth_date' => $validated['birth_date'],
                 'guardian_phone' => $validated['guardian_phone'],
@@ -84,9 +85,14 @@ class StudentController extends Controller
                 'photo_path' => $photoPath,
             ]);
 
+            $carnetImage = $this->generateCarnetImage($student);
+            $carnetPath = 'students/carnets/' . $student->id . '.png';
+            Storage::disk('public')->put($carnetPath, $carnetImage);
+            $student->update(['carnet_path' => $carnetPath]);
+
             return redirect()->route('students.index')->with('flash', [
                 'success' => 'Estudiante registrado correctamente.',
-                'description' => 'El estudiante ha sido registrado exitosamente.',
+                'description' => 'El estudiante ha sido registrado exitosamente.',  
             ]);
         } catch (\Exception $e) {
             return redirect()->back()->with('flash', [
@@ -141,6 +147,11 @@ class StudentController extends Controller
             'high_school_name' => $validated['high_school_name'],
         ]);
 
+        $carnetImage = $this->generateCarnetImage($student);
+        $carnetPath = 'students/carnets/' . $student->id . '.png';
+        Storage::disk('public')->put($carnetPath, $carnetImage);
+        $student->update(['carnet_path' => $carnetPath]);
+
         return redirect()->route('students.index')->with('flash', [
             'success' => 'Estudiante actualizado correctamente.',
             'description' => 'El estudiante ha sido actualizado exitosamente.',
@@ -174,45 +185,6 @@ class StudentController extends Controller
             DB::rollBack();
 
             return redirect()->back()->withErrors(['error' => 'Ocurrió un error al intentar eliminar el estudiante y la persona asociada.']);
-        }
-    }
-
-    public function generateAllCarnetsPdf()
-    {
-        $students = Student::with('person')->get();
-
-        $studentsWithErrors = [];
-        $data = [];
-
-        try {
-            foreach ($students as $student) {
-                $latestEnrollment = $student->person->enrollment()->latest('enrollment_date')->first();
-
-                if ($latestEnrollment == null) {
-                    $studentsWithErrors[] = $student->person->doi . ' ';
-                    continue;
-                }
-
-                $image = $this->generateCarnetImage($student);
-                $data[] = ['imageData' => $image];
-            }
-
-            if (!empty($studentsWithErrors)) {
-                return redirect()->back()->with('flash', [
-                    'error' => 'Uno o más estudiantes no tienen matrícula.',
-                    'description' => 'Los siguientes estudiantes no tienen matrícula: ' . implode(' , ', $studentsWithErrors),
-                ]);
-            }
-
-            $pdf = Pdf::loadView('students.carnet_batch', ['students' => $data]);
-            $pdf->setPaper('A4', 'portrait');
-
-            return $pdf->stream('carnets.pdf');
-        } catch (\Exception $e) {
-            return redirect()->back()->with('flash', [
-                'error' => 'Error al generar los carnets.',
-                'description' => $e->getMessage(),
-            ]);
         }
     }
 
@@ -507,38 +479,43 @@ class StudentController extends Controller
     public function generateSelectedCarnetsPdf(Request $request)
     {
         $selectedStudents = $request->input('ids', []);
-
         $students = Student::with('person')->whereIn('id', $selectedStudents)->get();
 
         $studentsWithErrors = [];
+        $data = [];
 
         try {
             foreach ($students as $student) {
                 $latestEnrollment = $student->person->enrollment()->latest('enrollment_date')->first();
-
-                if ($latestEnrollment == null) {
-                    $studentsWithErrors[] = $student->person->doi . ' ';
+                if (!$latestEnrollment) {
+                    $studentsWithErrors[] = $student->person->doi;
                     continue;
                 }
 
-                $image = $this->generateCarnetImage($student);
-                $data[] = ['imageData' => $image];
+                $carnetPath = 'students/carnets/' . $student->id . '.png';
+                if (!$student->carnet_path || !Storage::disk('public')->exists($student->carnet_path)) {
+                    $imageData = $this->generateCarnetImage($student);
+                    Storage::disk('public')->put($carnetPath, $imageData);
+                    $student->update(['carnet_path' => $carnetPath]);
+                }
+
+                $imageData = Storage::disk('public')->get($carnetPath);
+                $data[] = ['imageData' => $imageData];
             }
 
             if (!empty($studentsWithErrors)) {
                 return redirect()->back()->with('flash', [
-                    'error' => 'Uno o más estudiantes no tienen matrícula.',
-                    'description' => 'Los siguientes estudiantes no tienen matrícula: ' . implode(' , ', $studentsWithErrors),
+                    'error' => 'Estudiantes sin matrícula',
+                    'description' => implode(', ', $studentsWithErrors),
                 ]);
             }
 
             $pdf = Pdf::loadView('students.carnet_batch', ['students' => $data]);
-            $pdf->setPaper('A4', 'portrait');
-
             return $pdf->stream('carnets.pdf');
+
         } catch (\Exception $e) {
             return redirect()->back()->with('flash', [
-                'error' => 'Error al generar los carnets.',
+                'error' => 'Error al generar carnets',
                 'description' => $e->getMessage(),
             ]);
         }
