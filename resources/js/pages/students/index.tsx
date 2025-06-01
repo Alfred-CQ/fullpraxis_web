@@ -63,9 +63,9 @@ export default function StudentView({ students, flash }: Props) {
                 <div className="flex justify-between gap-x-2">
                     <Input placeholder="Filtrar por DNI..." value={dniFilter} onChange={(e) => setDniFilter(e.target.value)} className="max-w-xs" />
                     <div className="flex gap-x-2">
-                        <Button variant="outline" size="sm" onClick={() => window.open(route('students.all.carnets'), '_blank')}>
+                        <Button variant="outline" size="sm" onClick={() => window.open(route('students.export'), '_blank')}>
                             <Download />
-                            <span className="hidden lg:inline">Descargar Carnets</span>
+                            <span className="hidden lg:inline">Exportar Datos</span>
                         </Button>
                         <Button
                             variant="outline"

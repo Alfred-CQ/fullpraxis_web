@@ -18,6 +18,7 @@ class Student extends Model
         'guardian_phone',
         'high_school_name',
         'photo_path',
+        'carnet_path',
     ];
 
     public function person()
