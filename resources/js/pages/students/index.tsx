@@ -34,6 +34,9 @@ interface Props {
 
 export default function StudentView({ students, flash }: Props) {
     const { errors } = usePage().props;
+    const [dniFilter, setDniFilter] = useState('');
+    const filteredStudents = students.filter((student) => student.doi.toLowerCase().includes(dniFilter.toLowerCase()));
+
     useEffect(() => {
         if (errors) {
             Object.entries(errors).forEach(([field, message]) => {
@@ -52,17 +55,12 @@ export default function StudentView({ students, flash }: Props) {
         }
     }, [flash, errors]);
     const [selectedStudents, setSelectedStudents] = useState<Student[]>([]);
-    const [dniFilter, setDniFilter] = useState(''); // <-- NUEVO ESTADO
-
-    // Filtrado por DNI
-    const filteredStudents = students.filter((student) => student.doi.toLowerCase().includes(dniFilter.toLowerCase()));
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Alumnos" />
             <div className="flex h-full flex-1 flex-col gap-4 rounded-xl bg-[url('/images/main-logo_2x_opacity.png')] bg-[length:850px_auto] bg-center bg-no-repeat p-4">
                 <div className="flex justify-between gap-x-2">
-                    {/* FILTRO POR DNI */}
                     <Input placeholder="Filtrar por DNI..." value={dniFilter} onChange={(e) => setDniFilter(e.target.value)} className="max-w-xs" />
                     <div className="flex gap-x-2">
                         <Button
