@@ -63,8 +63,11 @@
                 <td style="width: 25%; background-color: #f0f0f0; padding: 6px; border: 1px solid #d0d0d0;"><strong>Código ID:</strong></td>
                 <td style="padding: 6px; border: 1px solid #d0d0d0;">{{ $data['student']['student_id'] }}</td>
                 <td rowspan="4" style="text-align: center; padding: 6px; border: 1px solid #d0d0d0;">
-                    <img src="{{ public_path('storage/' . $data['student']['photo_path']) }}" alt="Foto del estudiante" style="height: 100px; object-fit: cover;">
-
+                    @if ($data['student']['photo_path'])
+                    <img src="{{ asset('storage/' . $data['student']['photo_path']) }}" alt="Foto del estudiante" style="height: 100px; object-fit: cover;">
+                    @else
+                    <p>Sin foto</p>
+                    @endif
                 </td>
             </tr>
             <tr>
