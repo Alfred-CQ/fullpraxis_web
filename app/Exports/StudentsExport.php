@@ -36,6 +36,7 @@ class StudentsExport implements FromCollection, WithHeadings, WithMapping
             $student->photo_path ? 'Sí' : 'No',
             $student->carnet_path ? 'Sí' : 'No',
             $latestEnrollment->enrollment_date ?? 'No registrada',
+            $latestEnrollment->academicTerm->name ?? 'No registrado',
             $shiftTranslated,
         ];
     }
@@ -53,6 +54,7 @@ class StudentsExport implements FromCollection, WithHeadings, WithMapping
             '¿Tiene Foto?',
             '¿Tiene Carnet?',
             'Fecha de Matrícula',
+            'Ciclo Académico',
             'Turno (Mañana/Tarde/Completo)',
         ];
     }

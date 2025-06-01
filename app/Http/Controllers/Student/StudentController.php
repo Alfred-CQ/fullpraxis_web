@@ -14,6 +14,7 @@ use Inertia\Inertia;
 use Inertia\Response;
 
 use App\Exports\StudentsExport;
+use App\Imports\StudentsImport;
 use Maatwebsite\Excel\Facades\Excel;
 
 use Illuminate\Support\Carbon;
@@ -528,4 +529,24 @@ class StudentController extends Controller
     {
         return Excel::download(new StudentsExport, 'estudiantes.xlsx');
     }
+
+    public function import(Request $request)
+    {
+        $request->validate(['file' => 'required|mimes:xlsx,xls']);
+
+        $import = new StudentsImport;
+        Excel::import($import, $request->file('file'));
+
+        if (!empty($import->getErrors())) {
+            return back()->with('flash', [
+                'error' => 'Errores al importar estudiantes',
+                'description' => implode(' ', dd($import->getErrors())),
+            ]);
+        }
+
+        return back()->with('flash', [
+            'success' => 'Estudiantes importados correctamente',
+            'description' => 'Todos los estudiantes han sido importados exitosamente.',
+        ]);
+    }   
 }

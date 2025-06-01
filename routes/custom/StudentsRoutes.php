@@ -18,6 +18,7 @@ Route::middleware(['auth'])->group(function () {
     //Route::get('/students/all/carnets', [StudentController::class, 'generateAllCarnetsPdf'])->name('students.all.carnets');
     // routes/web.php
     Route::get('/students/export', [StudentController::class, 'export'])->name('students.export');
+    Route::post('/students/import', [StudentController::class, 'import'])->name('students.import');
     Route::get('/students/{id}/edit', [StudentController::class, 'edit'])->name('students.edit');
     Route::post('/students/{id}', [StudentController::class, 'update'])->name('students.update');
 
