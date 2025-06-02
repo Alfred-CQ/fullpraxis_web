@@ -537,10 +537,11 @@ class StudentController extends Controller
         $import = new StudentsImport;
         Excel::import($import, $request->file('file'));
 
+        //dd($import);
         if (!empty($import->getErrors())) {
             return back()->with('flash', [
                 'error' => 'Errores al importar estudiantes',
-                'description' => implode(' ', dd($import->getErrors())),
+                'description' => implode(' ', $import->getErrors()),
             ]);
         }
 

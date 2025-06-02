@@ -22,25 +22,29 @@ class StudentsImport implements ToModel, WithHeadingRow
     public function model(array $row)
     {
 
-        $row['dni'] = (string) $row['dni'] ?? null;
+        $row['dni'] = isset($row['dni']) ? (string) $row['dni'] : null;
         $row['telefono'] = isset($row['telefono']) ? (string) $row['telefono'] : null;
         $row['telefono_del_tutor'] = isset($row['telefono_del_tutor']) ? (string) $row['telefono_del_tutor'] : null;
-        
-        foreach (['fecha_de_nacimiento', 'fecha_de_matricula', 'start_date', 'end_date', 'due_date'] as $field) {
+        $row['colegio_de_procedencia'] = isset($row['colegio_de_procedencia']) ? (string) $row['colegio_de_procedencia'] : null;
+        foreach (['fecha_de_nacimiento', 'fecha_de_matricula', 'fecha_de_inicio', 'fecha_de_fin', 'fecha_de_vencimiento'] as $field) {
             if (!empty($row[$field])) {
                 try {
                     $row[$field] = is_numeric($row[$field])
                         ? Carbon::instance(ExcelDate::excelToDateTimeObject($row[$field]))->format('Y-m-d')
-                        : Carbon::parse($row[$field])->format('Y-m-d');
+                        : Carbon::createFromFormat('j/n/Y', $row[$field])->format('Y-m-d');
                 } catch (\Exception $e) {
                     $this->errors[] = "Error en fila (DOI: {$row['dni']}): Formato de fecha inválido en el campo '{$field}'.";
-                    return null; // Skip this row if date parsing fails
+                    return null; // O puedes continuar con el siguiente registro
                 }
             }
         }
 
+        
+        if (empty(array_filter($row))) {
+            return null;
+        }
         $validator = Validator::make($row, [
-            'dni' => 'required|string|size:8|unique:people,doi',
+            'dni' => 'required|string|size:8',
             'nombres' => 'required|string|max:50',
             'apellidos' => 'required|string|max:50',
             'telefono' => 'nullable|string|size:9',
@@ -49,20 +53,21 @@ class StudentsImport implements ToModel, WithHeadingRow
             'colegio_de_procedencia' => 'nullable|string|max:100',
             'fecha_de_matricula' => 'nullable|date',
             'ciclo_academico' => 'required|string|max:50',
-            'start_date' => 'required|date',
-            'end_date' => 'required|date',
-            'due_date' => 'required|date',
-            'total_payment' => 'required|numeric',
-            'debt_status' => 'required|in:Pagado,Pendiente,Vencido',
-            'study_area' => 'required|string|max:15',
+            'fecha_de_inicio' => 'required|date',
+            'fecha_de_fin' => 'required|date',
+            'fecha_de_vencimiento' => 'required|date',
+            'total_de_pago' => 'required|numeric',
+            'estado_de_deuda' => 'required|in:Pagado,Pendiente,Vencido,No registrado',
+            'area_de_estudio' => 'required|string|max:15',
             'turno' => 'nullable|in:Mañana,Tarde,Completo',
         ]); 
 
-
         if ($validator->fails()) {
-            $this->errors[] = "Error en fila (DOI: {$row['dni']}): " . $validator->errors()->first();
+            $doi = $row['dni'] ?? 'Sin DNI';
+            $this->errors[] = "Error en fila (DOI: {$doi}): " . $validator->errors()->first();
             return null;
         }
+
 
         $shiftDB = match ($row['turno'] ?? null) {
             'Mañana'   => 'morning',
@@ -71,11 +76,11 @@ class StudentsImport implements ToModel, WithHeadingRow
             default    => null,
         };
 
-        $paymentStatus = match ($row['debt_status'] ?? null) {
+        $paymentStatus = match ($row['estado_de_deuda'] ?? null) {
             'Pagado'     => 'paid',
             'Pendiente'  => 'pending',
             'Vencido'  => 'overdue',
-            default    => null,
+            default    => 'pending', // ojo aquí, si no se especifica, se asume 'pending'
         };
 
         $person = Person::updateOrCreate(
@@ -111,12 +116,12 @@ class StudentsImport implements ToModel, WithHeadingRow
                 ],
                 [
                     'enrollment_date' => $row['fecha_de_matricula'],
-                    'start_date' => $row['start_date'],
-                    'end_date' => $row['end_date'],
-                    'due_date' => $row['due_date'],
-                    'total_payment' => $row['total_payment'],
+                    'start_date' => $row['fecha_de_inicio'],
+                    'end_date' => $row['fecha_de_fin'],
+                    'due_date' => $row['fecha_de_vencimiento'],
+                    'total_payment' => $row['total_de_pago'],
                     'debt_status' => $paymentStatus,
-                    'study_area' => $row['study_area'],
+                    'study_area' => $row['area_de_estudio'],
                     'shift' => $shiftDB,
                 ]
             );
@@ -129,4 +134,6 @@ class StudentsImport implements ToModel, WithHeadingRow
     {
         return $this->errors;
     }
+
+
 }

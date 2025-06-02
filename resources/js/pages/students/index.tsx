@@ -77,7 +77,7 @@ export default function StudentView({ students, flash }: Props) {
                                         formData.append('file', file);
                                         router.post(route('students.import'), formData, {
                                             onFinish: () => {
-                                                input.value = ''; // Limpiar el input después de la carga
+                                                input.value = '';   
                                             },
                                         });
                                     }
