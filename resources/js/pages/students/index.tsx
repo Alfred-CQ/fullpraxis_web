@@ -12,7 +12,7 @@ import { Input } from '@/components/ui/input'; // <-- IMPORTANTE
 import { Student, columns } from './components/columns';
 import { DataTable } from './components/data-table';
 
-import { Download, PlusIcon } from 'lucide-react';
+import { Download, PlusIcon, Upload } from 'lucide-react';
 import { toast } from 'sonner';
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -63,6 +63,31 @@ export default function StudentView({ students, flash }: Props) {
                 <div className="flex justify-between gap-x-2">
                     <Input placeholder="Filtrar por DNI..." value={dniFilter} onChange={(e) => setDniFilter(e.target.value)} className="max-w-xs" />
                     <div className="flex gap-x-2">
+                        <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => {
+                                const input = document.createElement('input');
+                                input.type = 'file';
+                                input.accept = '.csv, .xlsx';
+                                input.onchange = (e) => {
+                                    const file = (e.target as HTMLInputElement).files?.[0];
+                                    if (file) {
+                                        const formData = new FormData();
+                                        formData.append('file', file);
+                                        router.post(route('students.import'), formData, {
+                                            onFinish: () => {
+                                                input.value = ''; // Limpiar el input después de la carga
+                                            },
+                                        });
+                                    }
+                                };
+                                input.click();
+                            }}
+                        >
+                            <Upload />
+                            <span className="hidden lg:inline">Importar Datos</span>
+                        </Button>
                         <Button variant="outline" size="sm" onClick={() => window.open(route('students.export'), '_blank')}>
                             <Download />
                             <span className="hidden lg:inline">Exportar Datos</span>
