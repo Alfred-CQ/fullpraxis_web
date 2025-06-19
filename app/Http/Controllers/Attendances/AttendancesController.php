@@ -91,13 +91,13 @@ class AttendancesController extends Controller
                         'tipo' => $a->attendance_type,
                         'hora' => Carbon::parse($a->recorded_at)->format('H:i:s'),
                     ];
-                })->toArray(),
+                })->values()->toArray(),
             ];
         });
 
         // Cargar vista y generar PDF
         $pdf = Pdf::loadView('attendances.daily-report-pdf', ['data' => $data, 'fecha' => $hoy]);
-        
+
         return $pdf->stream("reporte-asistencia-{$hoy}.pdf");
     }
 
