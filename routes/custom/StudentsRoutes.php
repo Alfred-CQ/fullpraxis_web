@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\Student\StudentController;
+use App\Http\Controllers\Attendances\AttendancesController;
 
 Route::middleware(['auth'])->group(function () {
 
@@ -24,6 +25,7 @@ Route::middleware(['auth'])->group(function () {
 
 
     Route::get('/students/{id}/attendance-report-pdf', [StudentController::class, 'attendanceReportPdf'])->name('students.attendance-report-pdf');
+    Route::get('/attendances/daily-report-pdf', [AttendancesController::class, 'dailyAttendanceReportPdf'])->name('attendances.daily-report-pdf');
     Route::get('/students/{id}/attendance-report', [StudentController::class, 'attendanceReportPdf'])->name('students.attendance-report');
 
     Route::get('/students/{id}/calendar', [StudentController::class, 'calendar'])->name('students.calendar');

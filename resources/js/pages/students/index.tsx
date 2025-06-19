@@ -12,7 +12,7 @@ import { Input } from '@/components/ui/input'; // <-- IMPORTANTE
 import { Student, columns } from './components/columns';
 import { DataTable } from './components/data-table';
 
-import { Download, PlusIcon, Upload } from 'lucide-react';
+import { FileText, Download, PlusIcon, Upload } from 'lucide-react';
 import { toast } from 'sonner';
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -63,6 +63,15 @@ export default function StudentView({ students, flash }: Props) {
                 <div className="flex justify-between gap-x-2">
                     <Input placeholder="Filtrar por DNI..." value={dniFilter} onChange={(e) => setDniFilter(e.target.value)} className="max-w-xs" />
                     <div className="flex gap-x-2">
+                        <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => window.open(route('attendances.daily-report-pdf'), '_blank')}
+                        >
+                            <FileText />
+                            <span className="hidden lg:inline">Reporte de Asistencia Hoy</span>
+                        </Button>
+                        
                         <Button
                             variant="outline"
                             size="sm"

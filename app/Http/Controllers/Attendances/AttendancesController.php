@@ -11,6 +11,8 @@ use App\Models\Student;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 
+use Barryvdh\DomPDF\Facade\Pdf;
+
 class AttendancesController extends Controller 
 {
     public function attendanceRegisterApi(Request $request)
@@ -66,4 +68,37 @@ class AttendancesController extends Controller
             ]
         ]);        
     }
+
+    public function dailyAttendanceReportPdf()
+    {
+        $hoy = Carbon::now('America/Lima')->format('Y-m-d');
+
+        // Obtenemos asistencias del día actual con datos del alumno
+        $attendances = Attendance::with('person')
+            ->whereDate('recorded_at', $hoy)
+            ->orderBy('recorded_at', 'asc')
+            ->get()
+            ->groupBy('person.id');
+
+        // Estructuramos los datos por persona
+        $data = $attendances->map(function ($asistencias, $personId) {
+            $persona = $asistencias->first()->person;
+            return [
+                'nombre_completo' => $persona->first_names . ' ' . $persona->last_names,
+                'doi' => $persona->doi,
+                'asistencias' => $asistencias->map(function ($a) {
+                    return [
+                        'tipo' => $a->attendance_type,
+                        'hora' => Carbon::parse($a->recorded_at)->format('H:i:s'),
+                    ];
+                })->toArray(),
+            ];
+        });
+
+        // Cargar vista y generar PDF
+        $pdf = Pdf::loadView('attendances.daily-report-pdf', ['data' => $data, 'fecha' => $hoy]);
+        
+        return $pdf->stream("reporte-asistencia-{$hoy}.pdf");
+    }
+
 }
